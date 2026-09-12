@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pau Brasil Motos — Painel de Metas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15171C;
+    --surface:#1D2027;
+    --surface-2:#252932;
+    --line:#31353F;
+    --text:#F3F1EC;
+    --muted:#9AA0AC;
+    --red:#E23B3B;
+    --gold:#E8A93A;
+    --blue:#4C8FE0;
+    --green:#3FAE6B;
+    --green-dim:#1E2E24;
+    --danger:#D64545;
+    --danger-dim:#3A2226;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+  #app{max-width:640px;margin:0 auto;min-height:100vh;padding:20px 18px 60px;position:relative;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+  .brand{display:flex;flex-direction:column;}
+  .brand .eyebrow{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.04em;color:var(--red);font-weight:600;}
+  .brand h1{font-family:'Oswald',sans-serif;font-size:26px;font-weight:600;margin:2px 0 0;letter-spacing:.01em;}
+  .admin-link{background:none;border:1px solid var(--line);color:var(--muted);font-size:13px;padding:7px 12px;border-radius:7px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .admin-link:hover{border-color:var(--muted);color:var(--text);}
+
+  .search-hero{margin-top:6vh;text-align:center;}
+  .search-hero h2{font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;line-height:1.15;margin:0 0 6px;}
+  .search-hero p{color:var(--muted);font-size:15px;margin:0 0 26px;}
+  .search-box{position:relative;}
+  .search-box input{width:100%;background:var(--surface);border:1.5px solid var(--line);color:var(--text);font-size:19px;padding:16px 18px;border-radius:12px;font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:.01em;outline:none;transition:border-color .15s;}
+  .search-box input:focus{border-color:var(--red);}
+  .search-box input::placeholder{color:var(--muted);font-family:'Inter',sans-serif;font-weight:400;}
+  .suggestions{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-align:left;}
+  .suggestion-item{padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .suggestion-item:last-child{border-bottom:none;}
+  .suggestion-item:hover{background:var(--surface-2);}
+  .suggestion-item .name{font-weight:600;font-size:15px;}
+  .suggestion-item .team{font-size:12px;color:var(--muted);}
+  .empty-state{margin-top:22px;color:var(--muted);font-size:14px;}
+  .loading-msg{margin-top:22px;color:var(--muted);font-size:14px;}
+
+  .back-btn{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0;margin-bottom:18px;display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;}
+  .back-btn:hover{color:var(--text);}
+  .profile-header{margin-bottom:18px;}
+  .profile-header .pname{font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;margin:0;}
+  .profile-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .chip{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:12.5px;padding:5px 11px;border-radius:20px;}
+  .chip b{color:var(--text);font-weight:600;}
+  .state-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid;font-weight:600;}
+  .state-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex:none;}
+  .state-select{background:var(--bg);border:1px solid var(--line);color:var(--text);font-size:12.5px;padding:5px 8px;border-radius:7px;font-family:'Inter',sans-serif;}
+  .month-tabs{display:flex;gap:8px;overflow-x:auto;margin:18px 0 4px;padding-bottom:4px;}
+  .month-tab{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:500;}
+  .month-tab.active{background:var(--red);border-color:var(--red);color:#fff;}
+  .updated-note{color:var(--muted);font-size:12px;margin:6px 0 20px;}
+
+  .group{margin-bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .group-title{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;padding:13px 16px;border-bottom:1px solid var(--line);color:var(--text);}
+  .group-rows{display:flex;flex-wrap:wrap;padding:10px 16px 14px;gap:14px 22px;}
+  .stat{min-width:70px;}
+  .stat .slabel{font-size:11px;color:var(--muted);margin-bottom:3px;}
+  .stat .sval{font-family:'Oswald',sans-serif;font-size:19px;font-weight:600;}
+  .sval.good{color:var(--green);}
+  .sval.bad{color:var(--danger);}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;}
+  .panel h3{font-family:'Oswald',sans-serif;font-size:16px;margin:0 0 14px;font-weight:600;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;}
+  .field input, .field select, .field textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;outline:none;}
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--red);}
+  .field textarea{font-family:ui-monospace,monospace;font-size:12.5px;min-height:160px;resize:vertical;}
+  .btn{background:var(--red);color:#fff;border:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;}
+  .btn:hover{background:#c92f2f;}
+  .btn.secondary{background:none;border:1px solid var(--line);color:var(--text);}
+  .btn.secondary:hover{border-color:var(--muted);}
+  .btn.small{padding:7px 12px;font-size:12.5px;}
+  .row-gap{display:flex;gap:10px;flex-wrap:wrap;}
+  .alert{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:14px;}
+  .alert.error{background:var(--danger-dim);color:#ff9d9d;border:1px solid #5a2a2a;}
+  .alert.ok{background:var(--green-dim);color:#8fe0af;border:1px solid #274a34;}
+  .dataset-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .dataset-item:last-child{border-bottom:none;}
+  .dataset-item .di-name{font-weight:600;}
+  .dataset-item .di-meta{color:var(--muted);font-size:12px;}
+  table.preview{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px;display:block;overflow-x:auto;white-space:nowrap;}
+  table.preview th, table.preview td{border:1px solid var(--line);padding:5px 7px;text-align:left;}
+  table.preview th{background:var(--surface-2);position:sticky;top:0;}
+  .hint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:6px;}
+  .login-box{max-width:320px;margin:12vh auto 0;text-align:center;}
+  .login-box h2{font-family:'Oswald',sans-serif;font-size:22px;margin-bottom:16px;}
+  .config-warning{max-width:520px;margin:10vh auto;text-align:center;padding:24px;background:var(--surface);border:1px solid var(--danger);border-radius:12px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- Firebase (compat SDK, sem necessidade de build/bundler) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============================================================
+   1) COLE AQUI A CONFIGURAÇÃO DO SEU PROJETO FIREBASE
+   (Firebase Console > Configurações do projeto > Seus apps > Web)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyD84wl9o4AZMq7W35yJfVS_adxQFOXvHQE",
+  authDomain: "paubrasilmotos-metas.firebaseapp.com",
+  projectId: "paubrasilmotos-metas",
+  storageBucket: "paubrasilmotos-metas.firebasestorage.app",
+  messagingSenderId: "1067880438406",
+  appId: "1:1067880438406:web:8b0ab684c1dd450a784f07"
+	};
+
+let db = null, auth = null, firebaseReady = false;
+try{
+  if(firebaseConfig.apiKey !== "COLE_AQUI"){
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    auth = firebase.auth();
+    firebaseReady = true;
+  }
+}catch(e){ console.error(e); }
+</script>
+
+<script>
+const TEMPLATES = {
+  padrao: {
+    label: 'Padrão (Consórcio)',
+    groups: [
+      { key:'cotas', label:'Cotas', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'adimplencia', label:'Adimplência', cols:[
+        {key:'meta',label:'Meta'},{key:'venda',label:'Venda'},{key:'atraso',label:'2ª Parc. Atraso'},{key:'real',label:'Real',percent:true}
+      ]},
+      { key:'cancelamento', label:'Cancelamento', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'cotaslic', label:'Cotas / Licenciamento', cols:[
+        {key:'meta',label:'Meta'},{key:'cotas',label:'Cotas'},{key:'cotaslic',label:'Cotas/Lic'},{key:'real',label:'Real',percent:true}
+      ]},
+      { key:'tipocota', label:'Tipo de Cota', cols:[
+        {key:'meta',label:'Meta'},{key:'nova',label:'Nova'},{key:'reposicao',label:'Reposição'},{key:'pctrep',label:'% Reposição',percent:true}
+      ]},
+      { key:'seguro', label:'Seguro', cols:[
+        {key:'sim',label:'Sim'},{key:'nao',label:'Não'},{key:'pct',label:'%',percent:true}
+      ]},
+    ]
+  },
+  digital: {
+    label: 'Digital (Faturamento + Consórcio)',
+    groups: [
+      { key:'moto0km', label:'Faturamento · Moto 0KM', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'seminovas', label:'Faturamento · Seminovas', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'cotasfat', label:'Faturamento · Cotas', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'adimplencia', label:'Adimplência', cols:[
+        {key:'meta',label:'Meta'},{key:'venda',label:'Venda'},{key:'atraso',label:'2ª Parc. Atraso'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'cancelamento', label:'Cancelamento', cols:[
+        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
+      ]},
+      { key:'cotaslic', label:'Cotas / Licenciamento', cols:[
+        {key:'meta',label:'Meta'},{key:'cotas',label:'Cotas'},{key:'cotaslic',label:'Cotas/Lic'},{key:'real',label:'Real',percent:true}
+      ]},
+      { key:'tipocota', label:'Tipo de Cota', cols:[
+        {key:'meta',label:'Meta'},{key:'nova',label:'Nova'},{key:'reposicao',label:'Reposição'},{key:'pctrep',label:'% Reposição',percent:true}
+      ]},
+    ]
+  }
+};
+
+function flatCols(template){
+  const out = [];
+  TEMPLATES[template].groups.forEach(g => g.cols.forEach(c => out.push({group:g.key, key:c.key})));
+  return out;
+}
+
+const SUPERVISOR_STATE = {
+  'renato':'Pernambuco', 'valeria':'Pernambuco', 'ana':'Pernambuco', 'hugo':'Pernambuco', 'laura':'Pernambuco',
+  'danielly':'Bahia', 'paula':'Bahia', 'nielton':'Bahia', 'rayllana':'Bahia'
+};
+const STATE_COLORS = { 'Pernambuco':'#4C8FE0', 'Bahia':'#E8A93A' };
+
+function inferState(supervisorName){
+  const n = normalize(supervisorName);
+  if(!n) return null;
+  const tokens = n.split(/\s+/);
+  for(const key of Object.keys(SUPERVISOR_STATE)){
+    if(tokens.includes(key)) return SUPERVISOR_STATE[key];
+  }
+  return null;
+}
+
+function stateBadge(stateName){
+  if(!stateName) return `<span class="state-badge" style="border-color:var(--line);color:var(--muted);"><span class="state-dot" style="background:var(--muted);"></span>Estado não identificado</span>`;
+  const color = STATE_COLORS[stateName] || '#9AA0AC';
+  return `<span class="state-badge" style="border-color:${color}66;color:${color};"><span class="state-dot" style="background:${color};"></span>${escapeHtml(stateName)}</span>`;
+}
+
+let state = {
+  view: 'loading',
+  registry: { teams: [], datasets: [] },
+  datasets: {},
+  index: [],
+  query: '',
+  selectedName: null,
+  selectedMonthKey: null,
+  adminUnlocked: false,
+  admin: { teamId:'', monthKey:'', monthLabel:'', pasteText:'', preview:null, error:'', ok:'', newTeamName:'', newTeamTemplate:'padrao', diagnostic:null, _strippedCount:0, loginEmail:'', loginPassword:'', loginError:'' }
+};
+
+function $(sel){ return document.querySelector(sel); }
+function app(){ return document.getElementById('app'); }
+
+function normalize(s){
+  return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+}
+
+async function getDocData(collection, id){
+  const snap = await db.collection(collection).doc(id).get();
+  return snap.exists ? snap.data() : null;
+}
+async function setDocData(collection, id, data){
+  await db.collection(collection).doc(id).set(data);
+}
+async function deleteDocData(collection, id){
+  await db.collection(collection).doc(id).delete();
+}
+
+async function loadAll(){
+  state.view = 'loading';
+  render();
+  try{
+    const reg = await getDocData('app', 'registry');
+    state.registry = reg || { teams: [], datasets: [] };
+  }catch(e){ state.registry = { teams: [], datasets: [] }; }
+
+  state.datasets = {};
+  for(const d of state.registry.datasets){
+    try{
+      const ds = await getDocData('datasets', d.teamId+'_'+d.monthKey);
+      if(ds) state.datasets[d.teamId+'::'+d.monthKey] = ds;
+    }catch(e){ /* skip missing */ }
+  }
+  buildIndex();
+  state.view = 'search';
+  render();
+}
+
+function buildIndex(){
+  const idx = [];
+  for(const d of state.registry.datasets){
+    const ds = state.datasets[d.teamId+'::'+d.monthKey];
+    if(!ds) continue;
+    const team = state.registry.teams.find(t => t.id === d.teamId);
+    if(!team) continue;
+    ds.rows.forEach(row => {
+      idx.push({
+        name: row.name,
+        norm: normalize(row.name),
+        teamId: team.id,
+        teamName: team.name,
+        state: team.state || null,
+        template: team.template,
+        supervisor: ds.supervisor ? ds.supervisor.name : '',
+        monthKey: d.monthKey,
+        monthLabel: d.monthLabel,
+        updatedAt: ds.updatedAt,
+        values: row.values
+      });
+    });
+  }
+  state.index = idx;
+}
+
+function uniqueNamesMatching(q){
+  const nq = normalize(q);
+  if(!nq) return [];
+  const seen = new Map();
+  state.index.forEach(r => {
+    if(r.norm.includes(nq)){
+      if(!seen.has(r.name)) seen.set(r.name, r);
+    }
+  });
+  return Array.from(seen.values()).slice(0,8);
+}
+
+function recordsFor(name){
+  return state.index.filter(r => r.name === name).sort((a,b) => b.monthKey.localeCompare(a.monthKey));
+}
+
+function parseNum(v){
+  if(v === undefined || v === null) return NaN;
+  const s = v.toString().trim().replace('%','').replace(',', '.');
+  if(s === '' || s === '-') return NaN;
+  const n = parseFloat(s);
+  return isNaN(n) ? NaN : n;
+}
+
+function statClass(groupKey, colKey, value, rowContext){
+  if(!value && value !== 0) return '';
+  const n = parseNum(value);
+  if(isNaN(n)) return '';
+  if(groupKey === 'cancelamento'){
+    if(rowContext){
+      const metaN = parseNum(rowContext.metaVal);
+      const realN = parseNum(rowContext.realVal);
+      if(!isNaN(metaN) && !isNaN(realN)){
+        return realN < metaN ? 'good' : 'bad';
+      }
+    }
+    return n <= 0 ? 'good' : 'bad';
+  }
+  if(groupKey === 'adimplencia'){
+    if(rowContext){
+      const metaN = parseNum(rowContext.metaVal);
+      if(!isNaN(metaN)){
+        return n >= metaN ? 'good' : 'bad';
+      }
+    }
+    return n >= 100 ? 'good' : 'bad';
+  }
+  return n >= 100 ? 'good' : 'bad';
+}
+
+function render(){
+  if(!firebaseReady){ return renderConfigWarning(); }
+  if(state.view === 'loading') return renderLoading();
+  if(state.view === 'search') return renderSearch();
+  if(state.view === 'profile') return renderProfile();
+  if(state.view === 'adminLogin') return renderAdminLogin();
+  if(state.view === 'admin') return renderAdmin();
+}
+
+function renderConfigWarning(){
+  app().innerHTML = `
+    <div class="config-warning">
+      <h2 style="font-family:'Oswald',sans-serif;">Configuração pendente</h2>
+      <p class="hint">Abra o arquivo <b>index.html</b>, encontre o bloco <b>firebaseConfig</b> perto do topo e cole ali as credenciais do seu projeto Firebase (Console do Firebase → Configurações do projeto → Seus apps → Web). Depois salve e recarregue esta página.</p>
+    </div>`;
+}
+
+function topbar(showAdmin){
+  return `
+    <div class="topbar">
+      <div class="brand">
+        <span class="eyebrow">Painel de Metas</span>
+        <h1>Minha Situação</h1>
+      </div>
+      ${showAdmin ? `<button class="admin-link" onclick="goAdmin()">Administração</button>` : `<button class="admin-link" onclick="goSearch()">← Consulta</button>`}
+    </div>`;
+}
+
+function renderLoading(){
+  app().innerHTML = `${topbar(true)}<div class="loading-msg">Carregando dados…</div>`;
+}
+
+function renderSearch(){
+  const suggestions = uniqueNamesMatching(state.query);
+  app().innerHTML = `
+    ${topbar(true)}
+    <div class="search-hero">
+      <h2>Pau Brasil Motos: Consulta de Metas</h2>
+      <p>Os dados são atualizados diariamente pelo administrador.</p>
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="Digite seu nome" value="${escapeAttr(state.query)}" autocomplete="off">
+      </div>
+      ${state.query && suggestions.length === 0 ? `<div class="empty-state">Nenhum colaborador encontrado com esse nome.</div>` : ''}
+      ${suggestions.length > 0 ? `<div class="suggestions">${suggestions.map(s => `
+        <div class="suggestion-item" onclick="selectPerson('${escapeAttr(s.name)}')">
+          <span class="name">${escapeHtml(s.name)}</span>
+          <span class="team">${escapeHtml(s.teamName)} · ${escapeHtml(s.state || '—')}</span>
+        </div>`).join('')}</div>` : ''}
+      ${state.index.length === 0 ? `<div class="empty-state">Nenhum dado cadastrado ainda. Peça ao administrador para importar a planilha do mês.</div>` : ''}
+    </div>
+  `;
+  const input = $('#searchInput');
+  if(input){
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+    input.addEventListener('input', e => { state.query = e.target.value; render(); });
+  }
+}
+
+function selectPerson(name){
+  const recs = recordsFor(name);
+  if(recs.length === 0) return;
+  state.selectedName = name;
+  state.selectedMonthKey = recs[0].monthKey;
+  state.view = 'profile';
+  render();
+}
+
+function goSearch(){ state.view = 'search'; state.query=''; render(); }
+
+function renderProfile(){
+  const recs = recordsFor(state.selectedName);
+  const rec = recs.find(r => r.monthKey === state.selectedMonthKey) || recs[0];
+  if(!rec){ goSearch(); return; }
+  const tmpl = TEMPLATES[rec.template];
+  const cols = flatCols(rec.template);
+
+  const groupsHtml = tmpl.groups.map(g => {
+    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
+    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
+    const metaVal = metaColIndex >= 0 ? rec.values[metaColIndex] : undefined;
+    const realVal = realColIndex >= 0 ? rec.values[realColIndex] : undefined;
+    const statsHtml = g.cols.map(c => {
+      const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === c.key);
+      const val = rec.values[flatIndex];
+      const cls = c.percent ? statClass(g.key, c.key, val, { metaVal, realVal }) : '';
+      return `<div class="stat">
+        <div class="slabel">${escapeHtml(c.label)}</div>
+        <div class="sval ${cls}">${val === undefined || val === '' ? '—' : escapeHtml(val)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="group">
+      <div class="group-title">${escapeHtml(g.label)}</div>
+      <div class="group-rows">${statsHtml}</div>
+    </div>`;
+  }).join('');
+
+  const monthTabs = recs.map(r => `
+    <button class="month-tab ${r.monthKey===rec.monthKey?'active':''}" onclick="selectMonth('${r.monthKey}')">${escapeHtml(r.monthLabel)}</button>
+  `).join('');
+
+  const updated = rec.updatedAt ? new Date(rec.updatedAt).toLocaleString('pt-BR') : '—';
+
+  app().innerHTML = `
+    ${topbar(true)}
+    <button class="back-btn" onclick="goSearch()">← Voltar à pesquisa</button>
+    <div class="profile-header">
+      <p class="pname">${escapeHtml(rec.name)}</p>
+      <div class="profile-meta">
+        ${stateBadge(rec.state)}
+        <span class="chip">Equipe: <b>${escapeHtml(rec.teamName)}</b></span>
+        <span class="chip">Supervisor(a): <b>${escapeHtml(rec.supervisor || '—')}</b></span>
+      </div>
+    </div>
+    <div class="month-tabs">${monthTabs}</div>
+    <div class="updated-note">Atualizado em ${updated}</div>
+    ${groupsHtml}
+  `;
+}
+
+function selectMonth(mk){ state.selectedMonthKey = mk; render(); }
+
+// ---------- ADMIN ----------
+
+function goAdmin(){
+  if(state.adminUnlocked){ state.view = 'admin'; }
+  else { state.view = 'adminLogin'; state.admin.loginError=''; }
+  render();
+}
+
+function renderAdminLogin(){
+  app().innerHTML = `
+    ${topbar(false)}
+    <div class="login-box">
+      <h2>Acesso restrito</h2>
+      ${state.admin.loginError ? `<div class="alert error">${escapeHtml(state.admin.loginError)}</div>` : ''}
+      <div class="field"><input id="loginEmail" type="email" placeholder="E-mail do administrador" value="${escapeAttr(state.admin.loginEmail)}"></div>
+      <div class="field"><input id="loginPassword" type="password" placeholder="Senha" value=""></div>
+      <button class="btn" style="width:100%" onclick="doLogin()">Entrar</button>
+      <p class="hint">O acesso de administrador é criado no Console do Firebase (Authentication → Users), não nesta tela.</p>
+    </div>
+  `;
+  const emailInp = $('#loginEmail');
+  const passInp = $('#loginPassword');
+  emailInp.addEventListener('input', e => state.admin.loginEmail = e.target.value);
+  passInp.addEventListener('input', e => state.admin.loginPassword = e.target.value);
+  passInp.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+}
+
+async function doLogin(){
+  try{
+    await auth.signInWithEmailAndPassword(state.admin.loginEmail, state.admin.loginPassword);
+    state.admin.loginError = '';
+    state.admin.loginPassword = '';
+    // adminUnlocked will flip via onAuthStateChanged listener
+  }catch(e){
+    state.admin.loginError = 'E-mail ou senha inválidos.';
+    render();
+  }
+}
+
+async function doLogout(){
+  await auth.signOut();
+  goSearch();
+}
+
+function renderAdmin(){
+  const teamOptions = state.registry.teams.map(t => `<option value="${t.id}" ${t.id===state.admin.teamId?'selected':''}>${escapeHtml(t.name)} (${TEMPLATES[t.template].label})</option>`).join('');
+
+  const datasetList = state.registry.datasets
+    .slice()
+    .sort((a,b)=> b.monthKey.localeCompare(a.monthKey) || a.teamId.localeCompare(b.teamId))
+    .map(d => {
+      const team = state.registry.teams.find(t=>t.id===d.teamId);
+      const ds = state.datasets[d.teamId+'::'+d.monthKey];
+      const upd = ds && ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
+      return `<div class="dataset-item">
+        <div>
+          <div class="di-name">${escapeHtml(team?team.name:d.teamId)} · ${escapeHtml(d.monthLabel)}</div>
+          <div class="di-meta">${ds ? ds.rows.length : 0} colaboradores · atualizado ${upd}</div>
+        </div>
+        <button class="btn small secondary" onclick="deleteDataset('${d.teamId}','${d.monthKey}')">Excluir</button>
+      </div>`;
+    }).join('') || `<div class="hint">Nenhum dado importado ainda.</div>`;
+
+  app().innerHTML = `
+    ${topbar(false)}
+    <p class="hint" style="margin-bottom:18px;">Área do administrador. Os colaboradores não têm acesso a esta tela.</p>
+
+    <div class="panel">
+      <h3>1. Equipes</h3>
+      <div class="row-gap" style="align-items:flex-end;">
+        <div class="field" style="flex:2;min-width:160px;">
+          <label>Nome da equipe</label>
+          <input id="newTeamName" type="text" placeholder="Ex: Petrolina Matriz" value="${escapeAttr(state.admin.newTeamName)}">
+        </div>
+        <div class="field" style="flex:1;min-width:140px;">
+          <label>Formato</label>
+          <select id="newTeamTemplate">
+            <option value="padrao" ${state.admin.newTeamTemplate==='padrao'?'selected':''}>Padrão (Consórcio)</option>
+            <option value="digital" ${state.admin.newTeamTemplate==='digital'?'selected':''}>Digital (Faturamento + Consórcio)</option>
+          </select>
+        </div>
+        <button class="btn" onclick="addTeam()">Adicionar</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Equipes por estado</h3>
+      <p class="hint" style="margin-bottom:14px;">O estado é detectado automaticamente pelo nome do supervisor assim que os dados são salvos. Corrija manualmente se necessário.</p>
+      ${state.registry.teams.length === 0 ? `<div class="hint">Nenhuma equipe cadastrada ainda.</div>` : `
+        ${['Pernambuco','Bahia',null].map(st => {
+          const teamsInState = state.registry.teams.filter(t => (t.state||null) === st);
+          if(teamsInState.length === 0) return '';
+          return `<div style="margin-bottom:14px;">
+            <div style="margin-bottom:8px;">${stateBadge(st)}</div>
+            ${teamsInState.map(t => `
+              <div class="dataset-item">
+                <div class="di-name">${escapeHtml(t.name)} <span class="di-meta">(${TEMPLATES[t.template].label})</span></div>
+                <select class="state-select" onchange="setTeamState('${t.id}', this.value)">
+                  <option value="" ${!t.state?'selected':''}>Não identificado</option>
+                  <option value="Pernambuco" ${t.state==='Pernambuco'?'selected':''}>Pernambuco</option>
+                  <option value="Bahia" ${t.state==='Bahia'?'selected':''}>Bahia</option>
+                </select>
+              </div>
+            `).join('')}
+          </div>`;
+        }).join('')}
+      `}
+    </div>
+
+    <div class="panel">
+      <h3>2. Importar dados do mês</h3>
+      <div class="field">
+        <label>Equipe</label>
+        <select id="dsTeam">
+          <option value="">Selecione...</option>
+          ${teamOptions}
+        </select>
+      </div>
+      <div class="row-gap">
+        <div class="field" style="flex:1;min-width:150px;">
+          <label>Mês/Ano</label>
+          <input id="dsMonth" type="month" value="${escapeAttr(state.admin.monthKey)}">
+        </div>
+        <div class="field" style="flex:1;min-width:150px;">
+          <label>Rótulo exibido (ex: SET/2026)</label>
+          <input id="dsMonthLabel" type="text" placeholder="SET/2026" value="${escapeAttr(state.admin.monthLabel)}">
+        </div>
+      </div>
+      <div class="field">
+        <label>Colar linhas de dados do Excel (sem cabeçalho). A ÚLTIMA linha deve ser a do supervisor.</label>
+        <textarea id="pasteArea" placeholder="Cole aqui as linhas copiadas do Excel...">${escapeHtml(state.admin.pasteText)}</textarea>
+        <div class="hint">Copie no Excel apenas as linhas de vendedores + a linha final do supervisor, sem cabeçalhos. Colunas separadas por TAB.</div>
+      </div>
+      <div class="row-gap">
+        <button class="btn secondary" onclick="previewPaste()">Pré-visualizar</button>
+        <button class="btn" onclick="saveDataset()">Salvar dados</button>
+      </div>
+      ${state.admin.error ? `<div class="alert error" style="margin-top:12px;">${escapeHtml(state.admin.error)}</div>` : ''}
+      ${state.admin.ok ? `<div class="alert ok" style="margin-top:12px;">${escapeHtml(state.admin.ok)}</div>` : ''}
+      ${state.admin.diagnostic ? renderDiagnostic() : ''}
+      ${state.admin.preview ? renderPreviewTable() : ''}
+    </div>
+
+    <div class="panel">
+      <h3>3. Dados já importados</h3>
+      ${datasetList}
+    </div>
+
+    <div class="panel">
+      <h3>4. Sessão</h3>
+      <p class="hint" style="margin-bottom:10px;">Conectado como <b>${escapeHtml(auth.currentUser ? auth.currentUser.email : '—')}</b></p>
+      <button class="btn secondary" onclick="doLogout()">Sair</button>
+    </div>
+  `;
+
+  const teamSel = $('#dsTeam'); if(teamSel){ teamSel.value = state.admin.teamId; teamSel.addEventListener('change', e => state.admin.teamId = e.target.value); }
+  const monthInp = $('#dsMonth'); if(monthInp) monthInp.addEventListener('change', e => state.admin.monthKey = e.target.value);
+  const monthLabelInp = $('#dsMonthLabel'); if(monthLabelInp) monthLabelInp.addEventListener('input', e => state.admin.monthLabel = e.target.value);
+  const pasteArea = $('#pasteArea'); if(pasteArea) pasteArea.addEventListener('input', e => state.admin.pasteText = e.target.value);
+  const newTeamNameInp = $('#newTeamName'); if(newTeamNameInp) newTeamNameInp.addEventListener('input', e => state.admin.newTeamName = e.target.value);
+  const newTeamTplSel = $('#newTeamTemplate'); if(newTeamTplSel) newTeamTplSel.addEventListener('change', e => state.admin.newTeamTemplate = e.target.value);
+}
+
+function renderDiagnostic(){
+  const d = state.admin.diagnostic;
+  const rows = d.firstRowValues.map((v,i) => {
+    const expectedLabel = d.expectedLabels[i] || '(a mais — sem coluna esperada aqui)';
+    return `<tr><td>${i+1}</td><td>${escapeHtml(v===undefined||v===''?'(vazio)':v)}</td><td>${escapeHtml(expectedLabel)}</td></tr>`;
+  }).join('');
+  return `<div style="margin-top:12px;">
+    <div class="hint" style="margin-bottom:8px;">Vendedor da 1ª linha: <b>${escapeHtml(d.firstRowName)}</b> — ${d.firstRowValues.length} valores encontrados, ${d.expectedCols} esperados.</div>
+    <table class="preview"><thead><tr><th>#</th><th>Valor colado</th><th>Coluna esperada correspondente</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <div class="hint" style="margin-top:8px;">As linhas cujo # ultrapassa o total esperado são as que sobram — geralmente colunas extras copiadas do Excel. Remova-as e cole novamente.</div>
+  </div>`;
+}
+
+function renderPreviewTable(){
+  const p = state.admin.preview;
+  const team = state.registry.teams.find(t=>t.id===state.admin.teamId);
+  const cols = flatCols(team.template);
+  const header = ['Nome', ...cols.map(c => c.group+'.'+c.key)];
+  const rows = [...p.rows.map(r=>[r.name,...r.values]), ['[SUPERVISOR] '+p.supervisor.name, ...p.supervisor.values]];
+  return `<table class="preview"><thead><tr>${header.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${escapeHtml(c===undefined?'':c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+async function setTeamState(teamId, value){
+  const team = state.registry.teams.find(t=>t.id===teamId);
+  if(!team) return;
+  team.state = value || null;
+  team.stateManual = true;
+  await saveRegistry();
+  buildIndex();
+  render();
+}
+
+async function addTeam(){
+  const name = (state.admin.newTeamName||'').trim();
+  if(!name) return;
+  const id = normalize(name).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || ('team-'+Date.now());
+  if(state.registry.teams.some(t=>t.id===id)){
+    state.admin.error = 'Já existe uma equipe com esse nome.';
+    render();
+    return;
+  }
+  state.registry.teams.push({ id, name, template: state.admin.newTeamTemplate });
+  await saveRegistry();
+  state.admin.newTeamName = '';
+  state.admin.error='';
+  state.admin.ok = 'Equipe adicionada.';
+  render();
+}
+
+function parsePaste(){
+  state.admin.error = '';
+  state.admin.preview = null;
+  state.admin.diagnostic = null;
+  if(!state.admin.teamId){ state.admin.error = 'Selecione a equipe.'; return null; }
+  if(!state.admin.monthKey){ state.admin.error = 'Selecione o mês.'; return null; }
+  if(!state.admin.monthLabel.trim()){ state.admin.error = 'Informe o rótulo do mês (ex: SET/2026).'; return null; }
+  const team = state.registry.teams.find(t=>t.id===state.admin.teamId);
+  if(!team){ state.admin.error = 'Equipe inválida.'; return null; }
+  const expectedCols = flatCols(team.template).length;
+  const lines = state.admin.pasteText.split('\n').map(l=>l.replace(/\r$/,'')).filter(l=>l.trim()!=='');
+  if(lines.length < 2){ state.admin.error = 'Cole ao menos uma linha de vendedor + a linha do supervisor.'; return null; }
+
+  const rawRows = lines.map(l => l.split('\t').map(c=>c.trim()));
+  const widths = rawRows.map(r => r.length);
+  const maxWidth = Math.max(...widths);
+  if(widths.some(w => w !== maxWidth)){
+    state.admin.error = `As linhas coladas não têm todas o mesmo número de colunas (variando entre ${Math.min(...widths)} e ${maxWidth}). Confira se copiou o intervalo completo e retangular no Excel.`;
+    return null;
+  }
+
+  const names = rawRows.map(r => r[0]);
+  const valuesMatrix = rawRows.map(r => r.slice(1));
+  const rawValWidth = maxWidth - 1;
+
+  function build(colIndexesToKeep){
+    const rows = names.map((name, i) => ({
+      name,
+      values: colIndexesToKeep.map(ci => valuesMatrix[i][ci])
+    }));
+    const supervisor = rows.pop();
+    return { rows, supervisor };
+  }
+
+  if(rawValWidth === expectedCols){
+    return build([...Array(rawValWidth).keys()]);
+  }
+
+  if(rawValWidth > expectedCols){
+    const blankCols = [];
+    for(let c=0; c<rawValWidth; c++){
+      const allBlank = valuesMatrix.every(row => (row[c]||'').trim() === '');
+      if(allBlank) blankCols.push(c);
+    }
+    const keep = [...Array(rawValWidth).keys()].filter(c => !blankCols.includes(c));
+    if(keep.length === expectedCols){
+      const result = build(keep);
+      state.admin._strippedCount = blankCols.length;
+      return result;
+    }
+  }
+
+  state.admin.error = `A 1ª linha colada tem ${rawValWidth} valores, mas o formato "${TEMPLATES[team.template].label}" espera ${expectedCols}. Veja abaixo cada célula numerada da 1ª linha.`;
+  state.admin.diagnostic = {
+    expectedCols,
+    expectedLabels: flatCols(team.template).map(c => c.group+'.'+c.key),
+    firstRowName: names[0],
+    firstRowValues: valuesMatrix[0]
+  };
+  return null;
+}
+
+function previewPaste(){
+  const result = parsePaste();
+  if(result){ state.admin.preview = result; }
+  render();
+}
+
+async function saveDataset(){
+  const result = parsePaste();
+  if(!result) { render(); return; }
+  const teamId = state.admin.teamId, monthKey = state.admin.monthKey, monthLabel = state.admin.monthLabel.trim();
+  const payload = { rows: result.rows, supervisor: result.supervisor, monthLabel, updatedAt: Date.now() };
+  await setDocData('datasets', teamId+'_'+monthKey, payload);
+
+  const exists = state.registry.datasets.some(d => d.teamId===teamId && d.monthKey===monthKey);
+  if(!exists){
+    state.registry.datasets.push({ teamId, monthKey, monthLabel });
+  }
+  const team = state.registry.teams.find(t=>t.id===teamId);
+  if(team && !team.stateManual){
+    const inferred = inferState(result.supervisor.name);
+    if(inferred) team.state = inferred;
+  }
+  await saveRegistry();
+  state.datasets[teamId+'::'+monthKey] = payload;
+  buildIndex();
+  state.admin.preview = null;
+  state.admin.pasteText = '';
+  state.admin.error = '';
+  state.admin.diagnostic = null;
+  const strippedNote = state.admin._strippedCount ? ` (${state.admin._strippedCount} colunas vazias foram ignoradas automaticamente)` : '';
+  state.admin._strippedCount = 0;
+  state.admin.ok = `Dados salvos: ${result.rows.length} colaboradores + supervisor(a) ${escapeHtml(result.supervisor.name)}${strippedNote}.`;
+  render();
+}
+
+async function deleteDataset(teamId, monthKey){
+  if(!confirm('Excluir este conjunto de dados?')) return;
+  try{ await deleteDocData('datasets', teamId+'_'+monthKey); }catch(e){}
+  state.registry.datasets = state.registry.datasets.filter(d => !(d.teamId===teamId && d.monthKey===monthKey));
+  delete state.datasets[teamId+'::'+monthKey];
+  await saveRegistry();
+  buildIndex();
+  render();
+}
+
+async function saveRegistry(){
+  await setDocData('app', 'registry', state.registry);
+}
+
+function escapeHtml(s){
+  return (s===undefined||s===null?'':s.toString()).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+window.selectPerson = selectPerson;
+window.selectMonth = selectMonth;
+window.goSearch = goSearch;
+window.goAdmin = goAdmin;
+window.doLogin = doLogin;
+window.doLogout = doLogout;
+window.addTeam = addTeam;
+window.setTeamState = setTeamState;
+window.previewPaste = previewPaste;
+window.saveDataset = saveDataset;
+window.deleteDataset = deleteDataset;
+
+if(firebaseReady){
+  auth.onAuthStateChanged(user => {
+    state.adminUnlocked = !!user;
+    if(user && (state.view === 'adminLogin')){ state.view = 'admin'; }
+    if(!user && state.view === 'admin'){ state.view = 'search'; }
+    if(state.view !== 'loading') render();
+  });
+  loadAll();
+} else {
+  render();
+}
+</script>
+</body>
+</html>
