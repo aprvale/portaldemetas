@@ -47,6 +47,31 @@
   .suggestion-item .team{font-size:12px;color:var(--muted);}
   .empty-state{margin-top:22px;color:var(--muted);font-size:14px;}
   .loading-msg{margin-top:22px;color:var(--muted);font-size:14px;}
+  .mode-toggle{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:22px;}
+  .mode-btn{border:none;background:none;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;padding:8px 18px;border-radius:7px;cursor:pointer;}
+  .mode-btn.active{background:var(--red);color:#fff;}
+  .team-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+  .team-card:hover{border-color:var(--muted);}
+  .team-card-top{display:flex;justify-content:space-between;align-items:center;}
+  .team-card-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;}
+  .team-card-meta{font-size:12px;color:var(--muted);margin-top:6px;}
+  .alert-row{display:flex;gap:10px;margin:16px 0 22px;flex-wrap:wrap;}
+  .alert-card{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .alert-card.warn{border-left-color:var(--danger);}
+  .alert-card.ok{border-left-color:var(--green);}
+  .alert-card .ac-num{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;color:var(--text);}
+  .alert-card.warn .ac-num{color:var(--danger);}
+  .alert-card.ok .ac-num{color:var(--green);}
+  .alert-card .ac-label{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .roster-wrap{overflow-x:auto;padding:4px 4px 12px;}
+  table.roster{width:100%;border-collapse:collapse;font-size:12.5px;}
+  table.roster th{font-family:'Oswald',sans-serif;font-weight:500;color:var(--muted);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.roster td{padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-family:'Oswald',sans-serif;font-weight:600;}
+  table.roster tbody tr{cursor:pointer;}
+  table.roster tbody tr:hover{background:var(--surface-2);}
+  table.roster td.name-cell{font-family:'Inter',sans-serif;font-weight:600;color:var(--text);}
+  table.roster td.good{color:var(--green);}
+  table.roster td.bad{color:var(--danger);}
 
   .back-btn{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0;margin-bottom:18px;display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;}
   .back-btn:hover{color:var(--text);}
@@ -58,6 +83,13 @@
   .state-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid;font-weight:600;}
   .state-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex:none;}
   .state-select{background:var(--bg);border:1px solid var(--line);color:var(--text);font-size:12.5px;padding:5px 8px;border-radius:7px;font-family:'Inter',sans-serif;}
+  .vacation-tag{display:inline-block;background:var(--surface-2);color:var(--gold);font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;margin-left:6px;vertical-align:middle;}
+  .team-folder{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+  .team-folder summary{cursor:pointer;padding:12px 14px;font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;background:var(--surface-2);list-style:none;}
+  .team-folder summary::-webkit-details-marker{display:none;}
+  .team-folder[open] summary{border-bottom:1px solid var(--line);}
+  .team-folder-body{padding:10px 14px 4px;}
+  .team-folder-body .dataset-item:last-child{border-bottom:none;}
   .month-tabs{display:flex;gap:8px;overflow-x:auto;margin:18px 0 4px;padding-bottom:4px;}
   .month-tab{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:500;}
   .month-tab.active{background:var(--red);border-color:var(--red);color:#fff;}
@@ -99,6 +131,39 @@
   .login-box{max-width:320px;margin:12vh auto 0;text-align:center;}
   .login-box h2{font-family:'Oswald',sans-serif;font-size:22px;margin-bottom:16px;}
   .config-warning{max-width:520px;margin:10vh auto;text-align:center;padding:24px;background:var(--surface);border:1px solid var(--danger);border-radius:12px;}
+
+  .mode-tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:22px;}
+  .mode-tab{flex:1;text-align:center;background:none;border:none;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:500;font-size:14px;padding:9px 10px;border-radius:7px;cursor:pointer;}
+  .mode-tab.active{background:var(--red);color:#fff;}
+
+  .insights{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+  .insight-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:13px;}
+  .insight-row .ilabel{color:var(--text);}
+  .insight-count{font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;}
+  .insight-count.good{color:var(--green);}
+  .insight-count.bad{color:var(--danger);}
+
+  .team-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;}
+  table.team-table{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap;}
+  table.team-table th, table.team-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);}
+  table.team-table th{background:var(--surface-2);font-family:'Oswald',sans-serif;font-weight:600;font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none;position:sticky;top:0;}
+  table.team-table th:hover{color:var(--text);}
+  table.team-table th.sorted{color:var(--gold);}
+  table.team-table td.name-cell{font-weight:600;cursor:pointer;}
+  table.team-table td.name-cell:hover{color:var(--gold);}
+  table.team-table tbody tr:hover{background:var(--surface-2);}
+  table.team-table td.pctcell.good{color:var(--green);font-weight:600;}
+  table.team-table td.pctcell.bad{color:var(--danger);font-weight:600;}
+  .totals-row{background:var(--surface-2);}
+  .totals-row td{font-weight:700;color:var(--gold);}
+
+  .year-block{margin-bottom:12px;}
+  .year-label{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.03em;}
+  .month-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:6px;}
+  .month-cell{min-width:0;}
+  .month-cell button{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12px;padding:8px 4px;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:500;}
+  .month-cell button.active{background:var(--red);border-color:var(--red);color:#fff;}
+  .month-cell.empty{visibility:hidden;}
 </style>
 </head>
 <body>
@@ -221,8 +286,10 @@ let state = {
   datasets: {},
   index: [],
   query: '',
+  searchMode: 'colaborador',
   selectedName: null,
   selectedMonthKey: null,
+  teamSearch: { query:'', selectedTeamId:null, selectedMonthKey:null, sortCol:null, sortDir:'desc' },
   adminUnlocked: false,
   admin: { teamId:'', monthKey:'', monthLabel:'', pasteText:'', preview:null, error:'', ok:'', newTeamName:'', newTeamTemplate:'padrao', diagnostic:null, _strippedCount:0, loginEmail:'', loginPassword:'', loginError:'' }
 };
@@ -284,6 +351,7 @@ function buildIndex(){
         monthKey: d.monthKey,
         monthLabel: d.monthLabel,
         updatedAt: ds.updatedAt,
+        vacation: !!row.vacation,
         values: row.values
       });
     });
@@ -294,17 +362,38 @@ function buildIndex(){
 function uniqueNamesMatching(q){
   const nq = normalize(q);
   if(!nq) return [];
-  const seen = new Map();
-  state.index.forEach(r => {
-    if(r.norm.includes(nq)){
-      if(!seen.has(r.name)) seen.set(r.name, r);
-    }
-  });
-  return Array.from(seen.values()).slice(0,8);
+  const namesSeen = new Set();
+  state.index.forEach(r => { if(r.norm.includes(nq)) namesSeen.add(r.name); });
+  return Array.from(namesSeen).slice(0,8).map(name => recordsFor(name)[0]);
 }
 
 function recordsFor(name){
   return state.index.filter(r => r.name === name).sort((a,b) => b.monthKey.localeCompare(a.monthKey));
+}
+
+function teamDatasetsFor(teamId){
+  return state.registry.datasets
+    .filter(d => d.teamId === teamId)
+    .slice()
+    .sort((a,b) => b.monthKey.localeCompare(a.monthKey));
+}
+
+function latestSupervisorForTeam(teamId){
+  const dsEntries = teamDatasetsFor(teamId);
+  for(const d of dsEntries){
+    const ds = state.datasets[teamId+'::'+d.monthKey];
+    if(ds && ds.supervisor) return ds.supervisor.name;
+  }
+  return '';
+}
+
+function matchingTeams(q){
+  const nq = normalize(q);
+  if(!nq) return state.registry.teams.slice(0,8).map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
+  return state.registry.teams
+    .filter(t => normalize(t.name).includes(nq) || normalize(latestSupervisorForTeam(t.id)).includes(nq))
+    .slice(0,8)
+    .map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
 }
 
 function parseNum(v){
@@ -346,6 +435,7 @@ function render(){
   if(state.view === 'loading') return renderLoading();
   if(state.view === 'search') return renderSearch();
   if(state.view === 'profile') return renderProfile();
+  if(state.view === 'teamDashboard') return renderTeamDashboard();
   if(state.view === 'adminLogin') return renderAdminLogin();
   if(state.view === 'admin') return renderAdmin();
 }
@@ -373,11 +463,54 @@ function renderLoading(){
   app().innerHTML = `${topbar(true)}<div class="loading-msg">Carregando dados…</div>`;
 }
 
+function setSearchMode(mode){
+  state.searchMode = mode;
+  render();
+  const input = $('#searchInput') || $('#teamSearchInput');
+  if(input) input.focus();
+}
+
 function renderSearch(){
+  const modeTabs = `
+    <div class="mode-tabs">
+      <button class="mode-tab ${state.searchMode==='colaborador'?'active':''}" onclick="setSearchMode('colaborador')">Por colaborador</button>
+      <button class="mode-tab ${state.searchMode==='equipe'?'active':''}" onclick="setSearchMode('equipe')">Por equipe (supervisores)</button>
+    </div>`;
+
+  if(state.searchMode === 'equipe'){
+    const teamMatches = matchingTeams(state.teamSearch.query);
+    app().innerHTML = `
+      ${topbar(true)}
+      <div class="search-hero">
+        ${modeTabs}
+        <h2>Visão geral por equipe</h2>
+        <p>Consulte o desempenho macro de todos os vendedores de uma equipe.</p>
+        <div class="search-box">
+          <input id="teamSearchInput" type="text" placeholder="Digite o nome da equipe ou do supervisor" value="${escapeAttr(state.teamSearch.query)}" autocomplete="off">
+        </div>
+        ${state.teamSearch.query && teamMatches.length === 0 ? `<div class="empty-state">Nenhuma equipe encontrada.</div>` : ''}
+        ${teamMatches.length > 0 ? `<div class="suggestions">${teamMatches.map(m => `
+          <div class="suggestion-item" onclick="selectTeam('${escapeAttr(m.team.id)}')">
+            <span class="name">${escapeHtml(m.team.name)}</span>
+            <span class="team">${escapeHtml(m.supervisor || 'sem dados')} · ${escapeHtml(m.team.state || '—')}</span>
+          </div>`).join('')}</div>` : ''}
+        ${state.registry.teams.length === 0 ? `<div class="empty-state">Nenhuma equipe cadastrada ainda.</div>` : ''}
+      </div>
+    `;
+    const input = $('#teamSearchInput');
+    if(input){
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+      input.addEventListener('input', e => { state.teamSearch.query = e.target.value; render(); });
+    }
+    return;
+  }
+
   const suggestions = uniqueNamesMatching(state.query);
   app().innerHTML = `
     ${topbar(true)}
     <div class="search-hero">
+      ${modeTabs}
       <h2>Pau Brasil Motos: Consulta de Metas</h2>
       <p>Os dados são atualizados diariamente pelo administrador.</p>
       <div class="search-box">
@@ -386,7 +519,7 @@ function renderSearch(){
       ${state.query && suggestions.length === 0 ? `<div class="empty-state">Nenhum colaborador encontrado com esse nome.</div>` : ''}
       ${suggestions.length > 0 ? `<div class="suggestions">${suggestions.map(s => `
         <div class="suggestion-item" onclick="selectPerson('${escapeAttr(s.name)}')">
-          <span class="name">${escapeHtml(s.name)}</span>
+          <span class="name" style="${s.vacation?'opacity:.5;':''}">${escapeHtml(s.name)}${s.vacation ? ' <span class=\"vacation-tag\">Férias</span>' : ''}</span>
           <span class="team">${escapeHtml(s.teamName)} · ${escapeHtml(s.state || '—')}</span>
         </div>`).join('')}</div>` : ''}
       ${state.index.length === 0 ? `<div class="empty-state">Nenhum dado cadastrado ainda. Peça ao administrador para importar a planilha do mês.</div>` : ''}
@@ -409,7 +542,7 @@ function selectPerson(name){
   render();
 }
 
-function goSearch(){ state.view = 'search'; state.query=''; render(); }
+function goSearch(){ state.view = 'search'; state.query=''; state.teamSearch.query=''; render(); }
 
 function renderProfile(){
   const recs = recordsFor(state.selectedName);
@@ -418,7 +551,12 @@ function renderProfile(){
   const tmpl = TEMPLATES[rec.template];
   const cols = flatCols(rec.template);
 
-  const groupsHtml = tmpl.groups.map(g => {
+  const groupsHtml = rec.vacation ? `
+    <div class="group">
+      <div class="group-title">Férias</div>
+      <div class="group-rows"><div class="hint" style="margin:2px 0;">Este colaborador está de férias em ${escapeHtml(rec.monthLabel)}, sem metas registradas neste mês.</div></div>
+    </div>
+  ` : tmpl.groups.map(g => {
     const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
     const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
     const metaVal = metaColIndex >= 0 ? rec.values[metaColIndex] : undefined;
@@ -439,7 +577,7 @@ function renderProfile(){
   }).join('');
 
   const monthTabs = recs.map(r => `
-    <button class="month-tab ${r.monthKey===rec.monthKey?'active':''}" onclick="selectMonth('${r.monthKey}')">${escapeHtml(r.monthLabel)}</button>
+    <button class="month-tab ${r.monthKey===rec.monthKey?'active':''}" onclick="selectMonth('${r.monthKey}')">${escapeHtml(r.monthLabel)}${r.vacation ? ' 🌴' : ''}</button>
   `).join('');
 
   const updated = rec.updatedAt ? new Date(rec.updatedAt).toLocaleString('pt-BR') : '—';
@@ -448,7 +586,7 @@ function renderProfile(){
     ${topbar(true)}
     <button class="back-btn" onclick="goSearch()">← Voltar à pesquisa</button>
     <div class="profile-header">
-      <p class="pname">${escapeHtml(rec.name)}</p>
+      <p class="pname" style="${rec.vacation?'opacity:.5;':''}">${escapeHtml(rec.name)}${rec.vacation ? ' <span class="vacation-tag">Férias</span>' : ''}</p>
       <div class="profile-meta">
         ${stateBadge(rec.state)}
         <span class="chip">Equipe: <b>${escapeHtml(rec.teamName)}</b></span>
@@ -462,6 +600,218 @@ function renderProfile(){
 }
 
 function selectMonth(mk){ state.selectedMonthKey = mk; render(); }
+
+function selectTeam(teamId){
+  const dsEntries = teamDatasetsFor(teamId);
+  if(dsEntries.length === 0) return;
+  state.teamSearch.selectedTeamId = teamId;
+  state.teamSearch.selectedMonthKey = dsEntries[0].monthKey;
+  state.teamSearch.sortCol = null;
+  state.teamSearch.sortDir = 'desc';
+  state.view = 'teamDashboard';
+  render();
+}
+
+function selectTeamMonth(mk){ state.teamSearch.selectedMonthKey = mk; render(); }
+
+function sortTeamTable(colKey){
+  if(state.teamSearch.sortCol === colKey){
+    state.teamSearch.sortDir = state.teamSearch.sortDir === 'desc' ? 'asc' : 'desc';
+  }else{
+    state.teamSearch.sortCol = colKey;
+    state.teamSearch.sortDir = 'desc';
+  }
+  render();
+}
+
+function renderYearMonthGrid(dsEntries, selectedMonthKey){
+  const byYear = new Map();
+  dsEntries.forEach(d => {
+    const year = d.monthKey.slice(0,4);
+    const month = parseInt(d.monthKey.slice(5,7),10);
+    if(!byYear.has(year)) byYear.set(year, new Map());
+    byYear.get(year).set(month, d);
+  });
+  const years = Array.from(byYear.keys()).sort((a,b) => b.localeCompare(a));
+  return years.map(year => {
+    const monthsMap = byYear.get(year);
+    const row = (fromM, toM) => {
+      const cells = [];
+      for(let m=fromM; m<=toM; m++){
+        const d = monthsMap.get(m);
+        if(!d){ cells.push(`<div class="month-cell empty"></div>`); continue; }
+        cells.push(`<div class="month-cell"><button class="${d.monthKey===selectedMonthKey?'active':''}" onclick="selectTeamMonth('${d.monthKey}')">${escapeHtml(d.monthLabel)}</button></div>`);
+      }
+      return `<div class="month-grid">${cells.join('')}</div>`;
+    };
+    return `<div class="year-block">
+      <div class="year-label">${escapeHtml(year)}</div>
+      ${row(1,6)}
+      ${row(7,12)}
+    </div>`;
+  }).join('');
+}
+
+function backToTeamList(){ state.view='search'; state.searchMode='equipe'; render(); }
+
+function goToProfileFromTeam(name){
+  selectPerson(name);
+}
+
+function renderTeamDashboard(){
+  const teamId = state.teamSearch.selectedTeamId;
+  const team = state.registry.teams.find(t => t.id === teamId);
+  if(!team){ state.view='search'; state.searchMode='equipe'; render(); return; }
+  const dsEntries = teamDatasetsFor(teamId);
+  const monthKey = state.teamSearch.selectedMonthKey || (dsEntries[0] && dsEntries[0].monthKey);
+  const dsMeta = dsEntries.find(d => d.monthKey === monthKey) || dsEntries[0];
+  const ds = state.datasets[teamId+'::'+monthKey];
+  if(!ds || !dsMeta){
+    app().innerHTML = `${topbar(false)}<button class="back-btn" onclick="goSearch()">← Voltar</button><div class="empty-state">Sem dados importados para esta equipe ainda.</div>`;
+    return;
+  }
+  const tmpl = TEMPLATES[team.template];
+  const cols = flatCols(team.template);
+
+  // ---- Totais da equipe (linha do supervisor) ----
+  const totalsHtml = tmpl.groups.map(g => {
+    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
+    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
+    const metaVal = metaColIndex >= 0 ? ds.supervisor.values[metaColIndex] : undefined;
+    const realVal = realColIndex >= 0 ? ds.supervisor.values[realColIndex] : undefined;
+    const statsHtml = g.cols.map(c => {
+      const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === c.key);
+      const val = ds.supervisor.values[flatIndex];
+      const cls = c.percent ? statClass(g.key, c.key, val, { metaVal, realVal }) : '';
+      return `<div class="stat">
+        <div class="slabel">${escapeHtml(c.label)}</div>
+        <div class="sval ${cls}">${val === undefined || val === '' ? '—' : escapeHtml(val)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="group">
+      <div class="group-title">${escapeHtml(g.label)}</div>
+      <div class="group-rows">${statsHtml}</div>
+    </div>`;
+  }).join('');
+
+  // ---- Colunas de "%" (uma por grupo) para a tabela comparativa e para os insights ----
+  const pctGroups = tmpl.groups.map(g => {
+    const pctCol = g.cols.find(c => c.percent);
+    const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === pctCol.key);
+    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
+    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
+    return { key: g.key, label: g.label, flatIndex, metaColIndex, realColIndex };
+  });
+
+  const rowsData = ds.rows.map(r => {
+    if(r.vacation){
+      return { name: r.name, vacation: true, perGroup: null };
+    }
+    const perGroup = {};
+    pctGroups.forEach(pg => {
+      const val = r.values[pg.flatIndex];
+      const metaVal = pg.metaColIndex >= 0 ? r.values[pg.metaColIndex] : undefined;
+      const realVal = pg.realColIndex >= 0 ? r.values[pg.realColIndex] : undefined;
+      perGroup[pg.key] = { val, cls: statClass(pg.key, 'pct', val, { metaVal, realVal }), n: parseNum(val) };
+    });
+    return { name: r.name, vacation: false, perGroup };
+  });
+
+  // ---- Insights rápidos (vendedores de férias não entram na contagem) ----
+  const insightsHtml = pctGroups.map(pg => {
+    const active = rowsData.filter(r => !r.vacation);
+    const good = active.filter(r => r.perGroup[pg.key].cls === 'good').length;
+    const total = active.filter(r => r.perGroup[pg.key].cls !== '').length;
+    if(total === 0) return '';
+    const cls = good === total ? 'good' : (good === 0 ? 'bad' : '');
+    return `<div class="insight-row">
+      <span class="ilabel">${escapeHtml(pg.label)}: dentro da meta</span>
+      <span class="insight-count ${cls}">${good} de ${total}</span>
+    </div>`;
+  }).join('');
+
+  // ---- Ordenação da tabela (vendedores de férias sempre por último) ----
+  let sortedRows = rowsData.slice();
+  if(state.teamSearch.sortCol){
+    const sc = state.teamSearch.sortCol;
+    sortedRows.sort((a,b) => {
+      if(a.vacation && b.vacation) return 0;
+      if(a.vacation) return 1;
+      if(b.vacation) return -1;
+      const av = sc === 'name' ? normalize(a.name) : a.perGroup[sc].n;
+      const bv = sc === 'name' ? normalize(b.name) : b.perGroup[sc].n;
+      const aBad = sc !== 'name' && isNaN(av), bBad = sc !== 'name' && isNaN(bv);
+      if(aBad && bBad) return 0;
+      if(aBad) return 1;
+      if(bBad) return -1;
+      if(av < bv) return state.teamSearch.sortDir === 'asc' ? -1 : 1;
+      if(av > bv) return state.teamSearch.sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const tableHeaders = `
+    <th class="${state.teamSearch.sortCol==='name'?'sorted':''}" onclick="sortTeamTable('name')">Vendedor</th>
+    ${pctGroups.map(pg => `<th class="${state.teamSearch.sortCol===pg.key?'sorted':''}" onclick="sortTeamTable('${pg.key}')">${escapeHtml(pg.label)}</th>`).join('')}
+  `;
+  const tableRows = sortedRows.map(r => {
+    if(r.vacation){
+      return `<tr>
+        <td class="name-cell" style="opacity:.5;" onclick="goToProfileFromTeam('${escapeAttr(r.name)}')">${escapeHtml(r.name)}</td>
+        <td colspan="${pctGroups.length}" style="opacity:.7;"><span class="vacation-tag">Férias</span></td>
+      </tr>`;
+    }
+    return `<tr>
+      <td class="name-cell" onclick="goToProfileFromTeam('${escapeAttr(r.name)}')">${escapeHtml(r.name)}</td>
+      ${pctGroups.map(pg => `<td class="pctcell ${r.perGroup[pg.key].cls}">${r.perGroup[pg.key].val === undefined || r.perGroup[pg.key].val === '' ? '—' : escapeHtml(r.perGroup[pg.key].val)}</td>`).join('')}
+    </tr>`;
+  }).join('');
+  const totalsRow = `
+    <tr class="totals-row">
+      <td>TOTAL (${escapeHtml(ds.supervisor.name)})</td>
+      ${pctGroups.map(pg => `<td>${ds.supervisor.values[pg.flatIndex] || '—'}</td>`).join('')}
+    </tr>`;
+
+  const monthGridHtml = renderYearMonthGrid(dsEntries, monthKey);
+
+  const updated = ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
+
+  app().innerHTML = `
+    ${topbar(true)}
+    <button class="back-btn" onclick="backToTeamList()">← Voltar às equipes</button>
+    <div class="profile-header">
+      <p class="pname">${escapeHtml(team.name)}</p>
+      <div class="profile-meta">
+        ${stateBadge(team.state)}
+        <span class="chip">Supervisor(a): <b>${escapeHtml(ds.supervisor.name)}</b></span>
+        <span class="chip">${ds.rows.length} vendedores</span>
+      </div>
+    </div>
+    ${monthGridHtml}
+    <div class="updated-note">Atualizado em ${updated}</div>
+
+    <div class="panel">
+      <h3>Totais da equipe</h3>
+      ${totalsHtml}
+    </div>
+
+    <div class="panel">
+      <h3>Panorama rápido</h3>
+      <div class="insights">${insightsHtml}</div>
+    </div>
+
+    <div class="panel">
+      <h3>Comparativo entre vendedores</h3>
+      <p class="hint" style="margin-bottom:10px;">Clique no cabeçalho de uma coluna para ordenar. Clique no nome do vendedor para abrir o perfil completo.</p>
+      <div class="team-table-wrap">
+        <table class="team-table">
+          <thead><tr>${tableHeaders}</tr></thead>
+          <tbody>${tableRows}${totalsRow}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
 
 // ---------- ADMIN ----------
 
@@ -507,24 +857,67 @@ async function doLogout(){
   goSearch();
 }
 
-function renderAdmin(){
-  const teamOptions = state.registry.teams.map(t => `<option value="${t.id}" ${t.id===state.admin.teamId?'selected':''}>${escapeHtml(t.name)} (${TEMPLATES[t.template].label})</option>`).join('');
+const MESES_ABBR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+function monthKeyToLabel(monthKey){
+  if(!monthKey || !/^\d{4}-\d{2}$/.test(monthKey)) return '';
+  const [year, month] = monthKey.split('-');
+  const idx = parseInt(month,10) - 1;
+  if(idx < 0 || idx > 11) return '';
+  return `${MESES_ABBR[idx]}/${year}`;
+}
 
-  const datasetList = state.registry.datasets
-    .slice()
-    .sort((a,b)=> b.monthKey.localeCompare(a.monthKey) || a.teamId.localeCompare(b.teamId))
-    .map(d => {
-      const team = state.registry.teams.find(t=>t.id===d.teamId);
+const SHORT_TEMPLATE_LABEL = { padrao: 'Padrão', digital: 'Digital' };
+
+function renderAdmin(){
+  const teamOptions = state.registry.teams.map(t => {
+    const sup = latestSupervisorForTeam(t.id);
+    const label = sup ? `${sup} — ${t.name}` : t.name;
+    return `<option value="${t.id}" ${t.id===state.admin.teamId?'selected':''}>${escapeHtml(label)} (${SHORT_TEMPLATE_LABEL[t.template]})</option>`;
+  }).join('');
+
+  const teamFolders = state.registry.teams.map(t => {
+    const entries = state.registry.datasets
+      .filter(d => d.teamId === t.id)
+      .slice()
+      .sort((a,b)=> b.monthKey.localeCompare(a.monthKey));
+    if(entries.length === 0) return '';
+    const sup = latestSupervisorForTeam(t.id);
+    const label = sup ? `${sup} — ${t.name}` : t.name;
+    const itemsHtml = entries.map(d => {
       const ds = state.datasets[d.teamId+'::'+d.monthKey];
       const upd = ds && ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
       return `<div class="dataset-item">
         <div>
-          <div class="di-name">${escapeHtml(team?team.name:d.teamId)} · ${escapeHtml(d.monthLabel)}</div>
+          <div class="di-name">${escapeHtml(d.monthLabel)}</div>
           <div class="di-meta">${ds ? ds.rows.length : 0} colaboradores · atualizado ${upd}</div>
         </div>
         <button class="btn small secondary" onclick="deleteDataset('${d.teamId}','${d.monthKey}')">Excluir</button>
       </div>`;
-    }).join('') || `<div class="hint">Nenhum dado importado ainda.</div>`;
+    }).join('');
+    return `<details class="team-folder">
+      <summary>📁 ${escapeHtml(label)} <span class="di-meta">(${entries.length} ${entries.length===1?'mês':'meses'})</span></summary>
+      <div class="team-folder-body">${itemsHtml}</div>
+    </details>`;
+  }).join('');
+
+  const orphanTeamIds = new Set(state.registry.teams.map(t=>t.id));
+  const orphanEntries = state.registry.datasets.filter(d => !orphanTeamIds.has(d.teamId));
+  const orphanFolder = orphanEntries.length === 0 ? '' : `<details class="team-folder">
+    <summary>📁 Sem equipe associada <span class="di-meta">(${orphanEntries.length})</span></summary>
+    <div class="team-folder-body">${orphanEntries.map(d => {
+      const ds = state.datasets[d.teamId+'::'+d.monthKey];
+      const upd = ds && ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
+      return `<div class="dataset-item">
+        <div>
+          <div class="di-name">${escapeHtml(d.monthLabel)}</div>
+          <div class="di-meta">${ds ? ds.rows.length : 0} colaboradores · atualizado ${upd}</div>
+        </div>
+        <button class="btn small secondary" onclick="deleteDataset('${d.teamId}','${d.monthKey}')">Excluir</button>
+      </div>`;
+    }).join('')}</div>
+  </details>`;
+
+  const datasetList = (teamFolders + orphanFolder) || `<div class="hint">Nenhum dado importado ainda.</div>`;
 
   app().innerHTML = `
     ${topbar(false)}
@@ -557,16 +950,26 @@ function renderAdmin(){
           if(teamsInState.length === 0) return '';
           return `<div style="margin-bottom:14px;">
             <div style="margin-bottom:8px;">${stateBadge(st)}</div>
-            ${teamsInState.map(t => `
+            ${teamsInState.map(t => {
+              const sup = latestSupervisorForTeam(t.id);
+              const displayName = sup ? `${escapeHtml(sup)} — ${escapeHtml(t.name)}` : escapeHtml(t.name);
+              return `
               <div class="dataset-item">
-                <div class="di-name">${escapeHtml(t.name)} <span class="di-meta">(${TEMPLATES[t.template].label})</span></div>
-                <select class="state-select" onchange="setTeamState('${t.id}', this.value)">
-                  <option value="" ${!t.state?'selected':''}>Não identificado</option>
-                  <option value="Pernambuco" ${t.state==='Pernambuco'?'selected':''}>Pernambuco</option>
-                  <option value="Bahia" ${t.state==='Bahia'?'selected':''}>Bahia</option>
-                </select>
+                <div>
+                  <div class="di-name">${displayName}</div>
+                  <div class="di-meta">${SHORT_TEMPLATE_LABEL[t.template]}</div>
+                </div>
+                <div class="row-gap" style="align-items:center;">
+                  <select class="state-select" onchange="setTeamState('${t.id}', this.value)">
+                    <option value="" ${!t.state?'selected':''}>Não identificado</option>
+                    <option value="Pernambuco" ${t.state==='Pernambuco'?'selected':''}>Pernambuco</option>
+                    <option value="Bahia" ${t.state==='Bahia'?'selected':''}>Bahia</option>
+                  </select>
+                  <button class="btn small secondary" onclick="deleteTeam('${t.id}')">Excluir equipe</button>
+                </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>`;
         }).join('')}
       `}
@@ -619,7 +1022,7 @@ function renderAdmin(){
   `;
 
   const teamSel = $('#dsTeam'); if(teamSel){ teamSel.value = state.admin.teamId; teamSel.addEventListener('change', e => state.admin.teamId = e.target.value); }
-  const monthInp = $('#dsMonth'); if(monthInp) monthInp.addEventListener('change', e => state.admin.monthKey = e.target.value);
+  const monthInp = $('#dsMonth'); if(monthInp) monthInp.addEventListener('change', e => { state.admin.monthKey = e.target.value; state.admin.monthLabel = monthKeyToLabel(e.target.value); render(); });
   const monthLabelInp = $('#dsMonthLabel'); if(monthLabelInp) monthLabelInp.addEventListener('input', e => state.admin.monthLabel = e.target.value);
   const pasteArea = $('#pasteArea'); if(pasteArea) pasteArea.addEventListener('input', e => state.admin.pasteText = e.target.value);
   const newTeamNameInp = $('#newTeamName'); if(newTeamNameInp) newTeamNameInp.addEventListener('input', e => state.admin.newTeamName = e.target.value);
@@ -645,7 +1048,10 @@ function renderPreviewTable(){
   const team = state.registry.teams.find(t=>t.id===state.admin.teamId);
   const cols = flatCols(team.template);
   const header = ['Nome', ...cols.map(c => c.group+'.'+c.key)];
-  const rows = [...p.rows.map(r=>[r.name,...r.values]), ['[SUPERVISOR] '+p.supervisor.name, ...p.supervisor.values]];
+  const rows = [
+    ...p.rows.map(r => r.vacation ? [r.name, `— Férias (${cols.length} colunas) —`] : [r.name,...r.values]),
+    ['[SUPERVISOR] '+p.supervisor.name, ...p.supervisor.values]
+  ];
   return `<table class="preview"><thead><tr>${header.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
   <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${escapeHtml(c===undefined?'':c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
 }
@@ -657,6 +1063,28 @@ async function setTeamState(teamId, value){
   team.stateManual = true;
   await saveRegistry();
   buildIndex();
+  render();
+}
+
+async function deleteTeam(teamId){
+  const team = state.registry.teams.find(t=>t.id===teamId);
+  if(!team) return;
+  const relatedDatasets = state.registry.datasets.filter(d => d.teamId === teamId);
+  const warning = relatedDatasets.length > 0
+    ? `Excluir a equipe "${team.name}"? Isso também apaga os dados de ${relatedDatasets.length} mês(es) já importados para ela. Esta ação não pode ser desfeita.`
+    : `Excluir a equipe "${team.name}"? Esta ação não pode ser desfeita.`;
+  if(!confirm(warning)) return;
+
+  for(const d of relatedDatasets){
+    try{ await deleteDocData('datasets', teamId+'_'+d.monthKey); }catch(e){}
+    delete state.datasets[teamId+'::'+d.monthKey];
+  }
+  state.registry.datasets = state.registry.datasets.filter(d => d.teamId !== teamId);
+  state.registry.teams = state.registry.teams.filter(t => t.id !== teamId);
+  if(state.admin.teamId === teamId) state.admin.teamId = '';
+  await saveRegistry();
+  buildIndex();
+  state.admin.ok = `Equipe "${team.name}" excluída.`;
   render();
 }
 
@@ -677,6 +1105,12 @@ async function addTeam(){
   render();
 }
 
+function isVacationRowCells(cells){
+  const valueCells = cells.slice(1).map(c => (c||'').trim()).filter(c => c !== '');
+  if(valueCells.length === 0) return false;
+  return valueCells.every(c => normalize(c) === 'ferias');
+}
+
 function parsePaste(){
   state.admin.error = '';
   state.admin.preview = null;
@@ -691,52 +1125,60 @@ function parsePaste(){
   if(lines.length < 2){ state.admin.error = 'Cole ao menos uma linha de vendedor + a linha do supervisor.'; return null; }
 
   const rawRows = lines.map(l => l.split('\t').map(c=>c.trim()));
-  const widths = rawRows.map(r => r.length);
+  const vacationFlags = rawRows.map(r => isVacationRowCells(r));
+
+  const regularRows = rawRows.filter((r,i) => !vacationFlags[i]);
+  if(regularRows.length === 0){ state.admin.error = 'Todas as linhas coladas estão marcadas como "Férias" — não sobrou nenhuma linha com dados, nem a do supervisor.'; return null; }
+  const widths = regularRows.map(r => r.length);
   const maxWidth = Math.max(...widths);
   if(widths.some(w => w !== maxWidth)){
     state.admin.error = `As linhas coladas não têm todas o mesmo número de colunas (variando entre ${Math.min(...widths)} e ${maxWidth}). Confira se copiou o intervalo completo e retangular no Excel.`;
     return null;
   }
 
-  const names = rawRows.map(r => r[0]);
-  const valuesMatrix = rawRows.map(r => r.slice(1));
   const rawValWidth = maxWidth - 1;
+  const regularValuesMatrix = regularRows.map(r => r.slice(1));
 
-  function build(colIndexesToKeep){
-    const rows = names.map((name, i) => ({
-      name,
-      values: colIndexesToKeep.map(ci => valuesMatrix[i][ci])
-    }));
-    const supervisor = rows.pop();
-    return { rows, supervisor };
-  }
-
-  if(rawValWidth === expectedCols){
-    return build([...Array(rawValWidth).keys()]);
-  }
-
-  if(rawValWidth > expectedCols){
-    const blankCols = [];
-    for(let c=0; c<rawValWidth; c++){
-      const allBlank = valuesMatrix.every(row => (row[c]||'').trim() === '');
-      if(allBlank) blankCols.push(c);
+  function resolveKeepIndexes(){
+    if(rawValWidth === expectedCols) return [...Array(rawValWidth).keys()];
+    if(rawValWidth > expectedCols){
+      const blankCols = [];
+      for(let c=0; c<rawValWidth; c++){
+        const allBlank = regularValuesMatrix.every(row => (row[c]||'').trim() === '');
+        if(allBlank) blankCols.push(c);
+      }
+      const keep = [...Array(rawValWidth).keys()].filter(c => !blankCols.includes(c));
+      if(keep.length === expectedCols){
+        state.admin._strippedCount = blankCols.length;
+        return keep;
+      }
     }
-    const keep = [...Array(rawValWidth).keys()].filter(c => !blankCols.includes(c));
-    if(keep.length === expectedCols){
-      const result = build(keep);
-      state.admin._strippedCount = blankCols.length;
-      return result;
-    }
+    return null;
   }
 
-  state.admin.error = `A 1ª linha colada tem ${rawValWidth} valores, mas o formato "${TEMPLATES[team.template].label}" espera ${expectedCols}. Veja abaixo cada célula numerada da 1ª linha.`;
-  state.admin.diagnostic = {
-    expectedCols,
-    expectedLabels: flatCols(team.template).map(c => c.group+'.'+c.key),
-    firstRowName: names[0],
-    firstRowValues: valuesMatrix[0]
-  };
-  return null;
+  const keepIndexes = resolveKeepIndexes();
+  if(!keepIndexes){
+    state.admin.error = `A 1ª linha colada tem ${rawValWidth} valores, mas o formato "${TEMPLATES[team.template].label}" espera ${expectedCols}. Veja abaixo cada célula numerada da 1ª linha.`;
+    state.admin.diagnostic = {
+      expectedCols,
+      expectedLabels: flatCols(team.template).map(c => c.group+'.'+c.key),
+      firstRowName: regularRows[0][0],
+      firstRowValues: regularValuesMatrix[0]
+    };
+    return null;
+  }
+
+  const rows = rawRows.map((r, i) => {
+    if(vacationFlags[i]) return { name: r[0], vacation: true, values: [] };
+    const cells = r.slice(1);
+    return { name: r[0], vacation: false, values: keepIndexes.map(ci => cells[ci]) };
+  });
+  const supervisor = rows.pop();
+  if(supervisor.vacation){
+    state.admin.error = 'A última linha (supervisor) não pode estar marcada como "Férias". Verifique se colou a linha de totais corretamente.';
+    return null;
+  }
+  return { rows, supervisor };
 }
 
 function previewPaste(){
@@ -796,11 +1238,18 @@ function escapeAttr(s){ return escapeHtml(s); }
 window.selectPerson = selectPerson;
 window.selectMonth = selectMonth;
 window.goSearch = goSearch;
+window.setSearchMode = setSearchMode;
+window.selectTeam = selectTeam;
+window.selectTeamMonth = selectTeamMonth;
+window.sortTeamTable = sortTeamTable;
+window.goToProfileFromTeam = goToProfileFromTeam;
+window.backToTeamList = backToTeamList;
 window.goAdmin = goAdmin;
 window.doLogin = doLogin;
 window.doLogout = doLogout;
 window.addTeam = addTeam;
 window.setTeamState = setTeamState;
+window.deleteTeam = deleteTeam;
 window.previewPaste = previewPaste;
 window.saveDataset = saveDataset;
 window.deleteDataset = deleteDataset;
