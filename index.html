@@ -389,7 +389,7 @@ function latestSupervisorForTeam(teamId){
 
 function matchingTeams(q){
   const nq = normalize(q);
-  if(!nq) return state.registry.teams.slice(0,8).map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
+  if(!nq) return state.registry.teams.map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
   return state.registry.teams
     .filter(t => normalize(t.name).includes(nq) || normalize(latestSupervisorForTeam(t.id)).includes(nq))
     .slice(0,8)
@@ -512,7 +512,6 @@ function renderSearch(){
     <div class="search-hero">
       ${modeTabs}
       <h2>Pau Brasil Motos: Consulta de Metas</h2>
-      <p>Os dados são atualizados diariamente pelo administrador.</p>
       <div class="search-box">
         <input id="searchInput" type="text" placeholder="Digite seu nome" value="${escapeAttr(state.query)}" autocomplete="off">
       </div>
