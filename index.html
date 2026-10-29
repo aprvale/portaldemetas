@@ -321,12 +321,13 @@ async function loadAll(){
   }catch(e){ state.registry = { teams: [], datasets: [] }; }
 
   state.datasets = {};
-  for(const d of state.registry.datasets){
+  // carrega todos os meses/equipes em paralelo (antes era um de cada vez)
+  await Promise.all(state.registry.datasets.map(async d => {
     try{
       const ds = await getDocData('datasets', d.teamId+'_'+d.monthKey);
       if(ds) state.datasets[d.teamId+'::'+d.monthKey] = ds;
     }catch(e){ /* skip missing */ }
-  }
+  }));
   buildIndex();
   state.view = 'search';
   render();
