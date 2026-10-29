@@ -1,1270 +1,215 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pau Brasil Motos — Painel de Metas</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070707">
+<title>Pau Brasil Motos — Portal de Metas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#15171C;
-    --surface:#1D2027;
-    --surface-2:#252932;
-    --line:#31353F;
-    --text:#F3F1EC;
-    --muted:#9AA0AC;
-    --red:#E23B3B;
-    --gold:#E8A93A;
-    --blue:#4C8FE0;
-    --green:#3FAE6B;
-    --green-dim:#1E2E24;
-    --danger:#D64545;
-    --danger-dim:#3A2226;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
-  #app{max-width:640px;margin:0 auto;min-height:100vh;padding:20px 18px 60px;position:relative;}
-  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
-  .brand{display:flex;flex-direction:column;}
-  .brand .eyebrow{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.04em;color:var(--red);font-weight:600;}
-  .brand h1{font-family:'Oswald',sans-serif;font-size:26px;font-weight:600;margin:2px 0 0;letter-spacing:.01em;}
-  .admin-link{background:none;border:1px solid var(--line);color:var(--muted);font-size:13px;padding:7px 12px;border-radius:7px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .admin-link:hover{border-color:var(--muted);color:var(--text);}
-
-  .search-hero{margin-top:6vh;text-align:center;}
-  .search-hero h2{font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;line-height:1.15;margin:0 0 6px;}
-  .search-hero p{color:var(--muted);font-size:15px;margin:0 0 26px;}
-  .search-box{position:relative;}
-  .search-box input{width:100%;background:var(--surface);border:1.5px solid var(--line);color:var(--text);font-size:19px;padding:16px 18px;border-radius:12px;font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:.01em;outline:none;transition:border-color .15s;}
-  .search-box input:focus{border-color:var(--red);}
-  .search-box input::placeholder{color:var(--muted);font-family:'Inter',sans-serif;font-weight:400;}
-  .suggestions{margin-top:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;text-align:left;}
-  .suggestion-item{padding:13px 16px;cursor:pointer;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
-  .suggestion-item:last-child{border-bottom:none;}
-  .suggestion-item:hover{background:var(--surface-2);}
-  .suggestion-item .name{font-weight:600;font-size:15px;}
-  .suggestion-item .team{font-size:12px;color:var(--muted);}
-  .empty-state{margin-top:22px;color:var(--muted);font-size:14px;}
-  .loading-msg{margin-top:22px;color:var(--muted);font-size:14px;}
-  .mode-toggle{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;margin-bottom:22px;}
-  .mode-btn{border:none;background:none;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;padding:8px 18px;border-radius:7px;cursor:pointer;}
-  .mode-btn.active{background:var(--red);color:#fff;}
-  .team-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
-  .team-card:hover{border-color:var(--muted);}
-  .team-card-top{display:flex;justify-content:space-between;align-items:center;}
-  .team-card-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;}
-  .team-card-meta{font-size:12px;color:var(--muted);margin-top:6px;}
-  .alert-row{display:flex;gap:10px;margin:16px 0 22px;flex-wrap:wrap;}
-  .alert-card{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;padding:12px 14px;}
-  .alert-card.warn{border-left-color:var(--danger);}
-  .alert-card.ok{border-left-color:var(--green);}
-  .alert-card .ac-num{font-family:'Oswald',sans-serif;font-size:22px;font-weight:600;color:var(--text);}
-  .alert-card.warn .ac-num{color:var(--danger);}
-  .alert-card.ok .ac-num{color:var(--green);}
-  .alert-card .ac-label{font-size:11.5px;color:var(--muted);margin-top:2px;}
-  .roster-wrap{overflow-x:auto;padding:4px 4px 12px;}
-  table.roster{width:100%;border-collapse:collapse;font-size:12.5px;}
-  table.roster th{font-family:'Oswald',sans-serif;font-weight:500;color:var(--muted);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;}
-  table.roster td{padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;font-family:'Oswald',sans-serif;font-weight:600;}
-  table.roster tbody tr{cursor:pointer;}
-  table.roster tbody tr:hover{background:var(--surface-2);}
-  table.roster td.name-cell{font-family:'Inter',sans-serif;font-weight:600;color:var(--text);}
-  table.roster td.good{color:var(--green);}
-  table.roster td.bad{color:var(--danger);}
-
-  .back-btn{background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:0;margin-bottom:18px;display:flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;}
-  .back-btn:hover{color:var(--text);}
-  .profile-header{margin-bottom:18px;}
-  .profile-header .pname{font-family:'Oswald',sans-serif;font-size:30px;font-weight:600;margin:0;}
-  .profile-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-  .chip{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:12.5px;padding:5px 11px;border-radius:20px;}
-  .chip b{color:var(--text);font-weight:600;}
-  .state-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 11px;border-radius:20px;border:1px solid;font-weight:600;}
-  .state-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex:none;}
-  .state-select{background:var(--bg);border:1px solid var(--line);color:var(--text);font-size:12.5px;padding:5px 8px;border-radius:7px;font-family:'Inter',sans-serif;}
-  .vacation-tag{display:inline-block;background:var(--surface-2);color:var(--gold);font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;margin-left:6px;vertical-align:middle;}
-  .team-folder{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;}
-  .team-folder summary{cursor:pointer;padding:12px 14px;font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;background:var(--surface-2);list-style:none;}
-  .team-folder summary::-webkit-details-marker{display:none;}
-  .team-folder[open] summary{border-bottom:1px solid var(--line);}
-  .team-folder-body{padding:10px 14px 4px;}
-  .team-folder-body .dataset-item:last-child{border-bottom:none;}
-  .month-tabs{display:flex;gap:8px;overflow-x:auto;margin:18px 0 4px;padding-bottom:4px;}
-  .month-tab{flex:none;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:500;}
-  .month-tab.active{background:var(--red);border-color:var(--red);color:#fff;}
-  .updated-note{color:var(--muted);font-size:12px;margin:6px 0 20px;}
-
-  .group{margin-bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
-  .group-title{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;padding:13px 16px;border-bottom:1px solid var(--line);color:var(--text);}
-  .group-rows{display:flex;flex-wrap:wrap;padding:10px 16px 14px;gap:14px 22px;}
-  .stat{min-width:70px;}
-  .stat .slabel{font-size:11px;color:var(--muted);margin-bottom:3px;}
-  .stat .sval{font-family:'Oswald',sans-serif;font-size:19px;font-weight:600;}
-  .sval.good{color:var(--green);}
-  .sval.bad{color:var(--danger);}
-
-  .panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;}
-  .panel h3{font-family:'Oswald',sans-serif;font-size:16px;margin:0 0 14px;font-weight:600;}
-  .field{margin-bottom:14px;}
-  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;}
-  .field input, .field select, .field textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;outline:none;}
-  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--red);}
-  .field textarea{font-family:ui-monospace,monospace;font-size:12.5px;min-height:160px;resize:vertical;}
-  .btn{background:var(--red);color:#fff;border:none;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;}
-  .btn:hover{background:#c92f2f;}
-  .btn.secondary{background:none;border:1px solid var(--line);color:var(--text);}
-  .btn.secondary:hover{border-color:var(--muted);}
-  .btn.small{padding:7px 12px;font-size:12.5px;}
-  .row-gap{display:flex;gap:10px;flex-wrap:wrap;}
-  .alert{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:14px;}
-  .alert.error{background:var(--danger-dim);color:#ff9d9d;border:1px solid #5a2a2a;}
-  .alert.ok{background:var(--green-dim);color:#8fe0af;border:1px solid #274a34;}
-  .dataset-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
-  .dataset-item:last-child{border-bottom:none;}
-  .dataset-item .di-name{font-weight:600;}
-  .dataset-item .di-meta{color:var(--muted);font-size:12px;}
-  table.preview{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:10px;display:block;overflow-x:auto;white-space:nowrap;}
-  table.preview th, table.preview td{border:1px solid var(--line);padding:5px 7px;text-align:left;}
-  table.preview th{background:var(--surface-2);position:sticky;top:0;}
-  .hint{font-size:12px;color:var(--muted);line-height:1.5;margin-top:6px;}
-  .login-box{max-width:320px;margin:12vh auto 0;text-align:center;}
-  .login-box h2{font-family:'Oswald',sans-serif;font-size:22px;margin-bottom:16px;}
-  .config-warning{max-width:520px;margin:10vh auto;text-align:center;padding:24px;background:var(--surface);border:1px solid var(--danger);border-radius:12px;}
-
-  .mode-tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:22px;}
-  .mode-tab{flex:1;text-align:center;background:none;border:none;color:var(--muted);font-family:'Oswald',sans-serif;font-weight:500;font-size:14px;padding:9px 10px;border-radius:7px;cursor:pointer;}
-  .mode-tab.active{background:var(--red);color:#fff;}
-
-  .insights{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
-  .insight-row{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font-size:13px;}
-  .insight-row .ilabel{color:var(--text);}
-  .insight-count{font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;}
-  .insight-count.good{color:var(--green);}
-  .insight-count.bad{color:var(--danger);}
-
-  .team-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;}
-  table.team-table{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap;}
-  table.team-table th, table.team-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);}
-  table.team-table th{background:var(--surface-2);font-family:'Oswald',sans-serif;font-weight:600;font-size:11.5px;color:var(--muted);cursor:pointer;user-select:none;position:sticky;top:0;}
-  table.team-table th:hover{color:var(--text);}
-  table.team-table th.sorted{color:var(--gold);}
-  table.team-table td.name-cell{font-weight:600;cursor:pointer;}
-  table.team-table td.name-cell:hover{color:var(--gold);}
-  table.team-table tbody tr:hover{background:var(--surface-2);}
-  table.team-table td.pctcell.good{color:var(--green);font-weight:600;}
-  table.team-table td.pctcell.bad{color:var(--danger);font-weight:600;}
-  .totals-row{background:var(--surface-2);}
-  .totals-row td{font-weight:700;color:var(--gold);}
-
-  .year-block{margin-bottom:12px;}
-  .year-label{font-family:'Oswald',sans-serif;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;letter-spacing:.03em;}
-  .month-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:6px;}
-  .month-cell{min-width:0;}
-  .month-cell button{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-size:12px;padding:8px 4px;border-radius:8px;cursor:pointer;font-family:'Oswald',sans-serif;font-weight:500;}
-  .month-cell button.active{background:var(--red);border-color:var(--red);color:#fff;}
-  .month-cell.empty{visibility:hidden;}
+:root{--bg:#070707;--card:#141414;--line:#2a2a2a;--am:#f8bd03;--ok:#3ddc84;--ruim:#ff5a4f;--txt:#f4f1ea;--mut:#9c978d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:Inter,sans-serif;min-height:100vh}
+.app{max-width:520px;margin:0 auto;padding:18px 16px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.marca{font-family:Anton;font-size:15px;letter-spacing:1px;color:var(--am)}
+h1{font-family:Anton;font-size:32px;line-height:1;margin-top:4px;text-transform:uppercase}
+.upd{font-family:'Bebas Neue';font-size:16px;letter-spacing:.5px;color:var(--mut);text-align:right;line-height:1.1}
+.upd b{display:block;color:var(--txt);font-weight:normal;font-size:20px}
+.sair{background:none;border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:4px 9px;font-size:12px;margin-top:6px;cursor:pointer}
+.tabs{display:flex;gap:6px;margin:14px 0 14px;background:#111;border:1px solid var(--line);border-radius:12px;padding:5px}
+.tabs button{flex:1;border:0;background:none;color:var(--mut);font-family:'Bebas Neue';font-size:20px;letter-spacing:.5px;padding:9px 4px;border-radius:8px;cursor:pointer}
+.tabs button.on{background:var(--am);color:#0a0a0a}
+.login{margin-top:40px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.login h2{font-family:Anton;font-size:24px;text-transform:uppercase}
+.login p{color:var(--mut);font-size:14px;margin:8px 0 16px;line-height:1.4}
+.campo{width:100%;background:#0d0d0d;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:22px;letter-spacing:4px;text-transform:uppercase;padding:13px 14px;font-family:'Bebas Neue'}
+.btn{width:100%;margin-top:12px;background:var(--am);color:#0a0a0a;border:0;border-radius:12px;font-family:Anton;font-size:18px;padding:12px;cursor:pointer;text-transform:uppercase}
+.erro{color:var(--ruim);font-size:14px;margin-top:10px;min-height:18px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:#1b1b1b;border:1px solid var(--line);border-radius:20px;padding:6px 11px;font-size:13px;cursor:pointer;color:var(--txt)}
+.chip.on{border-color:var(--am);color:var(--am)}
+.sel{width:100%;background:#111;border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:16px;padding:12px;margin-bottom:12px}
+.perfil{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.perfil .nome{font-family:Anton;font-size:24px;text-transform:uppercase;line-height:1.05}
+.perfil .nome.verm{color:var(--ruim)}
+.perfil .sub{color:var(--mut);font-size:13px;margin-top:4px}
+.mes{display:inline-block;background:var(--am);color:#0a0a0a;font-family:Anton;font-size:15px;border-radius:7px;padding:3px 9px 2px;margin-top:10px}
+.voltar{background:none;border:0;color:var(--am);font-family:'Bebas Neue';font-size:18px;cursor:pointer;margin-bottom:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;position:relative;min-height:96px}
+.kpi .n{font-family:'Bebas Neue';font-size:17px;letter-spacing:.5px;color:#bdb8ad}
+.kpi .v{font-family:Anton;font-size:32px;line-height:1.05;margin-top:2px}
+.kpi .d{font-family:'Bebas Neue';font-size:15px;color:var(--mut);letter-spacing:.3px}
+.kpi.ok .v{color:var(--ok)}.kpi.ruim .v{color:var(--ruim)}
+.kpi .tag{display:inline-block;margin-top:7px;font-family:'Bebas Neue';font-size:13px;background:#262626;color:var(--am);border-radius:5px;padding:2px 6px 1px}
+.bar{height:7px;background:#2b2a25;border-radius:4px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--am)}
+.kpi.ok .bar i{background:var(--ok)}
+.sec{font-family:Anton;font-size:17px;color:var(--am);letter-spacing:.5px;margin:20px 0 10px;text-transform:uppercase}
+.graf{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 10px 8px}
+.graf svg{width:100%;height:auto;display:block}
+.leg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin:6px 4px 0}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.lista{background:#f3f3f3;color:#0a0a0a;border:4px solid var(--am);border-radius:16px;overflow:hidden}
+.lh,.li{display:grid;grid-template-columns:1.7fr .8fr .8fr .8fr;align-items:center}
+.lh{background:var(--am);font-family:Anton;font-size:13px;padding:9px 10px}
+.lh div:not(:first-child),.li div:not(:first-child){text-align:center}
+.li{padding:9px 10px;border-bottom:1px solid #dcdcdc;cursor:pointer;min-height:52px}.li:nth-child(even){background:#e9e9e9}
+.li .nm{font-family:'Bebas Neue';font-size:19px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.li .nm.verm{color:#d6332a}.li .nm.aus{color:#8a8a8a}
+.li .v{font-family:Anton;font-size:17px}.li .ok{color:#11924a}.li .ruim{color:#d6332a}
+.li .s{font-family:'Bebas Neue';font-size:12px;color:#6b6b6b}
+.li .ausente{grid-column:2/-1;text-align:center;font-family:Anton;font-size:14px;letter-spacing:3px;color:#777}
+.farol .linha{display:grid;grid-template-columns:1fr auto;gap:8px;padding:11px 0;border-bottom:1px solid var(--line)}
+.farol .linha:last-child{border-bottom:0}
+.farol .ind{font-family:'Bebas Neue';font-size:19px;letter-spacing:.3px}
+.farol .grp{font-size:11px;color:var(--mut);letter-spacing:.5px;text-transform:uppercase}
+.farol .val{text-align:right;font-family:Anton;font-size:22px}
+.farol .val small{display:block;font-family:'Bebas Neue';font-size:13px;color:var(--mut)}
+.farol .ok{color:var(--ok)}.farol .ruim{color:var(--ruim)}.farol .parc{color:var(--am)}.farol .pend{color:var(--am);font-size:16px}
+.pontos{display:flex;align-items:center;gap:14px}.anel{width:86px;height:86px;flex:none}
+.nota{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.4}
+.carregando{color:var(--mut);text-align:center;margin-top:60px}
 </style>
 </head>
 <body>
-<div id="app"></div>
-
-<!-- Firebase (compat SDK, sem necessidade de build/bundler) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
+<div class="app" id="app"><div class="carregando">Carregando…</div></div>
 <script>
-/* ============================================================
-   1) COLE AQUI A CONFIGURAÇÃO DO SEU PROJETO FIREBASE
-   (Firebase Console > Configurações do projeto > Seus apps > Web)
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyD84wl9o4AZMq7W35yJfVS_adxQFOXvHQE",
-  authDomain: "paubrasilmotos-metas.firebaseapp.com",
-  projectId: "paubrasilmotos-metas",
-  storageBucket: "paubrasilmotos-metas.firebasestorage.app",
-  messagingSenderId: "1067880438406",
-  appId: "1:1067880438406:web:8b0ab684c1dd450a784f07"
-	};
+/* Portal de Metas — dados no Firestore, acesso por código (equipe ou líder).
+   Os dados são gravados pelo programa "Atualizador Metas" (botão Atualizar site). */
+const PROJETO="paubrasilmotos-metas", CHAVE_API="AIzaSyD84wl9o4AZMq7W35yJfVS_adxQFOXvHQE";
+const BASE=`https://firestore.googleapis.com/v1/projects/${PROJETO}/databases/(default)/documents/`;
+const MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 
-let db = null, auth = null, firebaseReady = false;
-try{
-  if(firebaseConfig.apiKey !== "COLE_AQUI"){
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-    auth = firebase.auth();
-    firebaseReady = true;
-  }
-}catch(e){ console.error(e); }
-</script>
+function dec(v){ if(!v) return null; const k=Object.keys(v)[0], x=v[k];
+  switch(k){case"stringValue":case"booleanValue":return x;case"integerValue":return Number(x);case"doubleValue":return x;case"nullValue":return null;
+  case"arrayValue":return (x.values||[]).map(dec);case"mapValue":{const o={};for(const [a,b] of Object.entries(x.fields||{}))o[a]=dec(b);return o}}return null}
+async function ler(col,id){const r=await fetch(BASE+col+"/"+encodeURIComponent(id)+"?key="+CHAVE_API); if(r.status===404||r.status===403) return null; if(!r.ok) throw new Error("Falha ao ler ("+r.status+")"); const j=await r.json(); const o={}; for(const [a,b] of Object.entries(j.fields||{})) o[a]=dec(b); return o}
+async function sha256(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+const mem={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const curto=n=>{n=String(n||"");const p=n.split(/\s+/).filter(w=>!["DA","DE","DO","DOS","DAS","E"].includes(w));return n.length<=22||p.length<2?n:p[0]+" "+p[p.length-1]};
+const classe=s=>s===1?"ok":s===-1?"ruim":"";
 
-<script>
-const TEMPLATES = {
-  padrao: {
-    label: 'Padrão (Consórcio)',
-    groups: [
-      { key:'cotas', label:'Cotas', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'adimplencia', label:'Adimplência', cols:[
-        {key:'meta',label:'Meta'},{key:'venda',label:'Venda'},{key:'atraso',label:'2ª Parc. Atraso'},{key:'real',label:'Real',percent:true}
-      ]},
-      { key:'cancelamento', label:'Cancelamento', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'cotaslic', label:'Cotas / Licenciamento', cols:[
-        {key:'meta',label:'Meta'},{key:'cotas',label:'Cotas'},{key:'cotaslic',label:'Cotas/Lic'},{key:'real',label:'Real',percent:true}
-      ]},
-      { key:'tipocota', label:'Tipo de Cota', cols:[
-        {key:'meta',label:'Meta'},{key:'nova',label:'Nova'},{key:'reposicao',label:'Reposição'},{key:'pctrep',label:'% Reposição',percent:true}
-      ]},
-      { key:'seguro', label:'Seguro', cols:[
-        {key:'sim',label:'Sim'},{key:'nao',label:'Não'},{key:'pct',label:'%',percent:true}
-      ]},
-    ]
-  },
-  digital: {
-    label: 'Digital (Faturamento + Consórcio)',
-    groups: [
-      { key:'moto0km', label:'Faturamento · Moto 0KM', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'seminovas', label:'Faturamento · Seminovas', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'cotasfat', label:'Faturamento · Cotas', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'adimplencia', label:'Adimplência', cols:[
-        {key:'meta',label:'Meta'},{key:'venda',label:'Venda'},{key:'atraso',label:'2ª Parc. Atraso'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'cancelamento', label:'Cancelamento', cols:[
-        {key:'meta',label:'Meta'},{key:'real',label:'Real'},{key:'pct',label:'%',percent:true}
-      ]},
-      { key:'cotaslic', label:'Cotas / Licenciamento', cols:[
-        {key:'meta',label:'Meta'},{key:'cotas',label:'Cotas'},{key:'cotaslic',label:'Cotas/Lic'},{key:'real',label:'Real',percent:true}
-      ]},
-      { key:'tipocota', label:'Tipo de Cota', cols:[
-        {key:'meta',label:'Meta'},{key:'nova',label:'Nova'},{key:'reposicao',label:'Reposição'},{key:'pctrep',label:'% Reposição',percent:true}
-      ]},
-    ]
-  }
-};
+const E={acesso:null, dados:{}, tela:"equipe", equipe:null, mes:null, vend:null, farol:null};
 
-function flatCols(template){
-  const out = [];
-  TEMPLATES[template].groups.forEach(g => g.cols.forEach(c => out.push({group:g.key, key:c.key})));
-  return out;
+async function entrar(codigo){
+  const h=await sha256(codigo.trim().toUpperCase());
+  const a=await ler("acesso",h);
+  if(!a) throw new Error("Código não encontrado. Confira com seu líder.");
+  E.acesso=a; mem.set("pm_codigo",codigo.trim().toUpperCase());
+  E.equipe=a.equipes&&a.equipes.length?a.equipes[0].id:null;
+  if(a.tipo==="lider"&&a.farol){ E.tela="lider"; ler("farol",a.farol).then(f=>{E.farol=f;if(E.tela==="lider")render()}).catch(()=>{}) }
+  await carregarEquipe(E.equipe);
 }
-
-const SUPERVISOR_STATE = {
-  'renato':'Pernambuco', 'valeria':'Pernambuco', 'ana':'Pernambuco', 'hugo':'Pernambuco', 'laura':'Pernambuco',
-  'danielly':'Bahia', 'paula':'Bahia', 'nielton':'Bahia', 'rayllana':'Bahia'
-};
-const STATE_COLORS = { 'Pernambuco':'#4C8FE0', 'Bahia':'#E8A93A' };
-
-function inferState(supervisorName){
-  const n = normalize(supervisorName);
-  if(!n) return null;
-  const tokens = n.split(/\s+/);
-  for(const key of Object.keys(SUPERVISOR_STATE)){
-    if(tokens.includes(key)) return SUPERVISOR_STATE[key];
-  }
-  return null;
+function eqInfo(id){return (E.acesso.equipes||[]).find(e=>e.id===id)}
+async function carregarEquipe(id){
+  if(!id||E.dados[id]) return;
+  const e=eqInfo(id), lider=E.acesso.tipo==="lider";
+  const d=await ler(lider?"detalhe":"resumo", lider?e.d:e.r);
+  E.dados[id]=d||{meses:{}};
 }
+function mesesDe(id){const d=E.dados[id];return d?Object.keys(d.meses||{}).sort():[]}
 
-function stateBadge(stateName){
-  if(!stateName) return `<span class="state-badge" style="border-color:var(--line);color:var(--muted);"><span class="state-dot" style="background:var(--muted);"></span>Estado não identificado</span>`;
-  const color = STATE_COLORS[stateName] || '#9AA0AC';
-  return `<span class="state-badge" style="border-color:${color}66;color:${color};"><span class="state-dot" style="background:${color};"></span>${escapeHtml(stateName)}</span>`;
+/* ---------- telas ---------- */
+function telaLogin(msg){
+  document.getElementById("app").innerHTML=`<header><div><div class="marca">PAU BRASIL MOTOS</div><h1>Portal de Metas</h1></div></header>
+  <div class="login"><h2>Digite seu código</h2><p>O código é da sua equipe (os líderes têm um código próprio). Peça ao seu líder se ainda não tiver.</p>
+  <input class="campo" id="cod" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="••••••">
+  <button class="btn" id="ent">Entrar</button><div class="erro" id="erro">${esc(msg||"")}</div></div>`;
+  const go=async()=>{const c=document.getElementById("cod").value; if(!c.trim())return; document.getElementById("erro").textContent="Verificando…";
+    try{await entrar(c); render()}catch(e){document.getElementById("erro").textContent=e.message}};
+  document.getElementById("ent").onclick=go; document.getElementById("cod").onkeydown=e=>{if(e.key==="Enter")go()};
 }
-
-let state = {
-  view: 'loading',
-  registry: { teams: [], datasets: [] },
-  datasets: {},
-  index: [],
-  query: '',
-  searchMode: 'colaborador',
-  selectedName: null,
-  selectedMonthKey: null,
-  teamSearch: { query:'', selectedTeamId:null, selectedMonthKey:null, sortCol:null, sortDir:'desc' },
-  adminUnlocked: false,
-  admin: { teamId:'', monthKey:'', monthLabel:'', pasteText:'', preview:null, error:'', ok:'', newTeamName:'', newTeamTemplate:'padrao', diagnostic:null, _strippedCount:0, loginEmail:'', loginPassword:'', loginError:'' }
-};
-
-function $(sel){ return document.querySelector(sel); }
-function app(){ return document.getElementById('app'); }
-
-function normalize(s){
-  return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+function cabecalho(){
+  const d=E.dados[E.equipe]; const at=d&&d.atualizado?new Date(d.atualizado):null;
+  const quando=at?at.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+at.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):"—";
+  const lider=E.acesso.tipo==="lider";
+  return `<header><div><div class="marca">PAU BRASIL MOTOS</div><h1>Portal de Metas</h1></div>
+  <div class="upd">ATUALIZADO EM<b>${quando}</b><button class="sair" id="sair">${lider?"Líder: "+esc(E.acesso.nome)+" · sair":"Sair"}</button></div></header>
+  <div class="tabs">${lider?`<button data-t="lider" class="${E.tela==="lider"?"on":""}">Meu farol</button>`:""}
+  <button data-t="equipe" class="${E.tela==="equipe"?"on":""}">Equipe</button>
+  <button data-t="vend" class="${E.tela==="vend"?"on":""}">Vendedor</button></div>`;
 }
-
-async function getDocData(collection, id){
-  const snap = await db.collection(collection).doc(id).get();
-  return snap.exists ? snap.data() : null;
+function kpis(m,linha){
+  if(!linha||!linha.i) return "";
+  return `<div class="grid">${m.g.map((g,k)=>{const x=linha.i[k]||{}; const bar=x.b!=null?`<div class="bar"><i style="width:${Math.min(x.b,1)*100}%"></i></div>`:"";
+    const tag=g.t!=="volume"&&g.m?`<span class="tag">${esc(g.m.replace("META ","meta ").replace("ATÉ","até"))}</span>`:"";
+    return `<div class="kpi ${classe(x.s)}"><div class="n">${esc(g.n)}</div><div class="v">${esc(x.p||"—")}</div><div class="d">${esc(x.d||(g.t==="volume"&&g.m?g.m.toLowerCase():""))}</div>${bar}${tag}</div>`}).join("")}</div>`;
 }
-async function setDocData(collection, id, data){
-  await db.collection(collection).doc(id).set(data);
+function grafico(pontos,titulo){
+  const ms=pontos.map(p=>p.k), W=440,H=170,pl=14,pb=22,pt=14;
+  if(!ms.length) return "";
+  const mx=Math.max(...pontos.map(p=>Math.max(p.c[0],p.c[1])),1)*1.15;
+  const passo=(W-pl-20)/Math.max(ms.length-1,1), x=i=>pl+10+i*passo, y=v=>pt+(H-pt-pb)*(1-v/mx);
+  let bars="",lin="",lab="";
+  pontos.forEach((p,i)=>{const [meta,real]=p.c, bw=Math.min(22,passo*.6), c=real>=meta?"#3ddc84":"#ff5a4f";
+    lab+=`<text x="${x(i)}" y="${H-6}" fill="#9c978d" font-size="10" text-anchor="middle" font-family="Bebas Neue">${MESES[+p.k.slice(5)-1]}</text>`;
+    bars+=`<rect x="${x(i)-bw/2}" y="${y(real)}" width="${bw}" height="${Math.max(y(0)-y(real),0)}" rx="3" fill="${c}"><title>${real} de ${meta}</title></rect><text x="${x(i)}" y="${y(real)-3}" fill="#f4f1ea" font-size="10" text-anchor="middle" font-family="Bebas Neue">${Math.round(real*10)/10}</text>`;
+    lin+=(lin?"L":"M")+(x(i)-passo/2)+" "+y(meta)+"L"+(x(i)+passo/2)+" "+y(meta)});
+  return `<div class="sec">${esc(titulo)}</div><div class="graf"><svg viewBox="0 0 ${W} ${H}"><line x1="${pl}" x2="${W-6}" y1="${y(0)}" y2="${y(0)}" stroke="#2a2a2a"/>${bars}<path d="${lin}" fill="none" stroke="#bdb8ad" stroke-width="1.5" stroke-dasharray="4 3"/>${lab}</svg>
+  <div class="leg"><span><i style="background:#3ddc84"></i>bateu a meta</span><span><i style="background:#ff5a4f"></i>abaixo</span><span><i style="border-top:2px dashed #bdb8ad;height:0;width:14px"></i>meta</span></div></div>`;
 }
-async function deleteDocData(collection, id){
-  await db.collection(collection).doc(id).delete();
+function serie(id,nome,total){
+  const d=E.dados[id]; return mesesDe(id).map(k=>{const m=d.meses[k]; const l=total?m.t:(m.v||[]).find(v=>v.n===nome); return l&&l.c?{k,c:l.c}:null}).filter(Boolean);
 }
-
-async function loadAll(){
-  state.view = 'loading';
-  render();
-  try{
-    const reg = await getDocData('app', 'registry');
-    state.registry = reg || { teams: [], datasets: [] };
-  }catch(e){ state.registry = { teams: [], datasets: [] }; }
-
-  state.datasets = {};
-  // carrega todos os meses/equipes em paralelo (antes era um de cada vez)
-  await Promise.all(state.registry.datasets.map(async d => {
-    try{
-      const ds = await getDocData('datasets', d.teamId+'_'+d.monthKey);
-      if(ds) state.datasets[d.teamId+'::'+d.monthKey] = ds;
-    }catch(e){ /* skip missing */ }
-  }));
-  buildIndex();
-  state.view = 'search';
-  render();
+function seletores(){
+  const eqs=E.acesso.equipes||[], ms=mesesDe(E.equipe);
+  let h="";
+  if(eqs.length>1) h+=`<select class="sel" id="selEq">${eqs.map(e=>`<option value="${esc(e.id)}" ${e.id===E.equipe?"selected":""}>${esc(e.nome)} — ${esc(e.sup)}</option>`).join("")}</select>`;
+  if(ms.length) h+=`<div class="chips">${ms.slice().reverse().map(k=>`<span class="chip ${k===E.mes?"on":""}" data-mes="${k}">${MESES[+k.slice(5)-1]}/${k.slice(2,4)}</span>`).join("")}</div>`;
+  return h;
 }
-
-function buildIndex(){
-  const idx = [];
-  for(const d of state.registry.datasets){
-    const ds = state.datasets[d.teamId+'::'+d.monthKey];
-    if(!ds) continue;
-    const team = state.registry.teams.find(t => t.id === d.teamId);
-    if(!team) continue;
-    ds.rows.forEach(row => {
-      idx.push({
-        name: row.name,
-        norm: normalize(row.name),
-        teamId: team.id,
-        teamName: team.name,
-        state: team.state || null,
-        template: team.template,
-        supervisor: ds.supervisor ? ds.supervisor.name : '',
-        monthKey: d.monthKey,
-        monthLabel: d.monthLabel,
-        updatedAt: ds.updatedAt,
-        vacation: !!row.vacation,
-        values: row.values
-      });
-    });
-  }
-  state.index = idx;
+function telaEquipe(){
+  const d=E.dados[E.equipe], e=eqInfo(E.equipe); const m=d&&d.meses[E.mes];
+  if(!m) return seletores()+`<p class="nota">Ainda não há dados desta equipe.</p>`;
+  const st=(x)=>x?classe(x.s):"";
+  const idx=t=>m.g.findIndex(g=>g.t===t);
+  const iC=m.g.findIndex(g=>g.n===m.s), iA=idx("adimplencia"), iX=idx("cancelamento");
+  const ativos=(m.v||[]).filter(v=>!v.a).length;
+  const linhas=(m.v||[]).map(v=>{const nm=`<div class="nm ${v.v?"verm":""} ${v.a?"aus":""}">${esc(curto(v.n))}</div>`;
+    if(v.a) return `<div class="li">${nm}<div class="ausente">${esc(v.a)}</div></div>`;
+    const c=v.i[iC]||{}, a=v.i[iA]||{}, x=v.i[iX]||{};
+    return `<div class="li" data-v="${esc(v.n)}">${nm}<div><div class="v ${st(c)}">${esc(c.p||"—")}</div><div class="s">${esc(m.s.toLowerCase())}</div></div>
+    <div><div class="v ${st(a)}">${esc(a.p||"—")}</div><div class="s">adimpl.</div></div><div><div class="v ${st(x)}">${esc(x.p||"—")}</div><div class="s">cancel.</div></div></div>`}).join("");
+  return seletores()+`<div class="perfil"><div class="nome">${esc(e.nome)}</div><div class="sub">Supervisão ${esc(m.t.n)} · ${ativos} vendedores</div><span class="mes">${esc(m.r)}</span></div>
+  ${kpis(m,m.t)}${grafico(serie(E.equipe,null,true),(m.s||"")+" da equipe mês a mês")}
+  <div class="sec">Vendedores</div><div class="lista"><div class="lh"><div>VENDEDOR</div><div>${esc(m.s)}</div><div>ADIM.</div><div>CANC.</div></div>${linhas}</div>
+  <p class="nota">Toque num vendedor para ver o detalhe e a evolução dele.${(m.v||[]).some(v=>v.v)?" Nome em vermelho: vendedor desligado com pendências.":""}</p>`;
 }
-
-function uniqueNamesMatching(q){
-  const nq = normalize(q);
-  if(!nq) return [];
-  const namesSeen = new Set();
-  state.index.forEach(r => { if(r.norm.includes(nq)) namesSeen.add(r.name); });
-  return Array.from(namesSeen).slice(0,8).map(name => recordsFor(name)[0]);
+function telaVend(){
+  const d=E.dados[E.equipe], m=d&&d.meses[E.mes], e=eqInfo(E.equipe);
+  if(!m) return seletores()+`<p class="nota">Ainda não há dados desta equipe.</p>`;
+  const vs=(m.v||[]).filter(v=>!v.a);
+  if(!E.vend||!vs.find(v=>v.n===E.vend)) E.vend=vs.length?vs[0].n:null;
+  const v=vs.find(v=>v.n===E.vend);
+  return seletores()+`<div class="chips">${vs.map(x=>`<span class="chip ${x.n===E.vend?"on":""}" data-v="${esc(x.n)}">${esc(curto(x.n))}</span>`).join("")}</div>
+  ${v?`<div class="perfil"><div class="nome ${v.v?"verm":""}">${esc(v.n)}</div><div class="sub">${esc(e.nome)} · supervisão ${esc(m.t.n)}</div><span class="mes">${esc(m.r)}</span></div>
+  ${kpis(m,v)}${grafico(serie(E.equipe,v.n,false),(m.s||"")+" mês a mês")}`:`<p class="nota">Nenhum vendedor ativo neste mês.</p>`}`;
 }
-
-function recordsFor(name){
-  return state.index.filter(r => r.name === name).sort((a,b) => b.monthKey.localeCompare(a.monthKey));
+function telaLider(){
+  const f=E.farol; if(!f) return `<p class="nota">Carregando seu farol…</p>`;
+  const a=f.max?f.pontos/f.max:0, R=36, C=2*Math.PI*R;
+  const it=(f.itens||[]).map(i=>{let v;
+    if(i.pend) v=`<span class="pend">PENDENTE</span><small>sem dado no painel</small>`;
+    else { const cls=i.s===1?"ok":i.s===0?"parc":"ruim"; v=`<span class="${cls}">${esc(i.real)}</span><small>meta ${esc(i.meta)}${i.aa?" · ano ant. "+esc(i.aa):""}</small>` }
+    return `<div class="linha"><div><div class="grp">${esc(i.g)}</div><div class="ind">${esc(i.n)}</div><div class="grp">pontos ${String(i.pts).replace(".",",")} de ${String(i.peso).replace(".",",")}</div></div><div class="val">${v}</div></div>`}).join("");
+  return `<div class="perfil"><div class="pontos"><svg class="anel" viewBox="0 0 90 90"><circle cx="45" cy="45" r="${R}" fill="none" stroke="#2b2a25" stroke-width="9"/><circle cx="45" cy="45" r="${R}" fill="none" stroke="#f8bd03" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C*Math.min(a,1)} ${C}" transform="rotate(-90 45 45)"/><text x="45" y="51" text-anchor="middle" font-family="Anton" font-size="19" fill="#f4f1ea">${String(Math.round(f.pontos*100)/100).replace(".",",")}</text></svg>
+  <div><div class="nome">Farol — ${esc(f.nome)}</div><div class="sub">Pontos no mês (de ${f.max}) · acumulado no ano: ${String(Math.round((f.pontosAc||0)*100)/100).replace(".",",")}</div><span class="mes">${esc(f.mes)}</span></div></div></div>
+  <div class="perfil farol">${it}</div><p class="nota">Último mês fechado, lido do seu painel. “Pendente” = indicador sem dado preenchido.</p>`;
 }
-
-function teamDatasetsFor(teamId){
-  return state.registry.datasets
-    .filter(d => d.teamId === teamId)
-    .slice()
-    .sort((a,b) => b.monthKey.localeCompare(a.monthKey));
-}
-
-function latestSupervisorForTeam(teamId){
-  const dsEntries = teamDatasetsFor(teamId);
-  for(const d of dsEntries){
-    const ds = state.datasets[teamId+'::'+d.monthKey];
-    if(ds && ds.supervisor) return ds.supervisor.name;
-  }
-  return '';
-}
-
-function matchingTeams(q){
-  const nq = normalize(q);
-  if(!nq) return state.registry.teams.map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
-  return state.registry.teams
-    .filter(t => normalize(t.name).includes(nq) || normalize(latestSupervisorForTeam(t.id)).includes(nq))
-    .slice(0,8)
-    .map(t => ({ team: t, supervisor: latestSupervisorForTeam(t.id) }));
-}
-
-function parseNum(v){
-  if(v === undefined || v === null) return NaN;
-  const s = v.toString().trim().replace('%','').replace(',', '.');
-  if(s === '' || s === '-') return NaN;
-  const n = parseFloat(s);
-  return isNaN(n) ? NaN : n;
-}
-
-function statClass(groupKey, colKey, value, rowContext){
-  if(!value && value !== 0) return '';
-  const n = parseNum(value);
-  if(isNaN(n)) return '';
-  if(groupKey === 'cancelamento'){
-    if(rowContext){
-      const metaN = parseNum(rowContext.metaVal);
-      const realN = parseNum(rowContext.realVal);
-      if(!isNaN(metaN) && !isNaN(realN)){
-        return realN < metaN ? 'good' : 'bad';
-      }
-    }
-    return n <= 0 ? 'good' : 'bad';
-  }
-  if(groupKey === 'adimplencia'){
-    if(rowContext){
-      const metaN = parseNum(rowContext.metaVal);
-      if(!isNaN(metaN)){
-        return n >= metaN ? 'good' : 'bad';
-      }
-    }
-    return n >= 100 ? 'good' : 'bad';
-  }
-  return n >= 100 ? 'good' : 'bad';
-}
-
 function render(){
-  if(!firebaseReady){ return renderConfigWarning(); }
-  if(state.view === 'loading') return renderLoading();
-  if(state.view === 'search') return renderSearch();
-  if(state.view === 'profile') return renderProfile();
-  if(state.view === 'teamDashboard') return renderTeamDashboard();
-  if(state.view === 'adminLogin') return renderAdminLogin();
-  if(state.view === 'admin') return renderAdmin();
+  const app=document.getElementById("app");
+  if(!E.acesso){telaLogin();return}
+  const ms=mesesDe(E.equipe); if(!E.mes||!ms.includes(E.mes)) E.mes=ms[ms.length-1]||null;
+  const corpo=E.tela==="lider"?telaLider():E.tela==="vend"?telaVend():telaEquipe();
+  app.innerHTML=cabecalho()+corpo;
+  app.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{E.tela=b.dataset.t;render();scrollTo(0,0)});
+  const s=document.getElementById("sair"); if(s) s.onclick=()=>{mem.del("pm_codigo");Object.assign(E,{acesso:null,dados:{},farol:null,vend:null});telaLogin()};
+  const se=document.getElementById("selEq"); if(se) se.onchange=async()=>{E.equipe=se.value;E.mes=null;E.vend=null;app.querySelector(".perfil")&&(app.querySelector(".perfil").style.opacity=.5);await carregarEquipe(E.equipe);render()};
+  app.querySelectorAll("[data-mes]").forEach(c=>c.onclick=()=>{E.mes=c.dataset.mes;render()});
+  app.querySelectorAll("[data-v]").forEach(c=>c.onclick=()=>{E.vend=c.dataset.v;E.tela="vend";render();scrollTo(0,0)});
 }
-
-function renderConfigWarning(){
-  app().innerHTML = `
-    <div class="config-warning">
-      <h2 style="font-family:'Oswald',sans-serif;">Configuração pendente</h2>
-      <p class="hint">Abra o arquivo <b>index.html</b>, encontre o bloco <b>firebaseConfig</b> perto do topo e cole ali as credenciais do seu projeto Firebase (Console do Firebase → Configurações do projeto → Seus apps → Web). Depois salve e recarregue esta página.</p>
-    </div>`;
-}
-
-function topbar(showAdmin){
-  return `
-    <div class="topbar">
-      <div class="brand">
-        <span class="eyebrow">Painel de Metas</span>
-        <h1>Minha Situação</h1>
-      </div>
-      ${showAdmin ? `<button class="admin-link" onclick="goAdmin()">Administração</button>` : `<button class="admin-link" onclick="goSearch()">← Consulta</button>`}
-    </div>`;
-}
-
-function renderLoading(){
-  app().innerHTML = `${topbar(true)}<div class="loading-msg">Carregando dados…</div>`;
-}
-
-function setSearchMode(mode){
-  state.searchMode = mode;
-  render();
-  const input = $('#searchInput') || $('#teamSearchInput');
-  if(input) input.focus();
-}
-
-function renderSearch(){
-  const modeTabs = `
-    <div class="mode-tabs">
-      <button class="mode-tab ${state.searchMode==='colaborador'?'active':''}" onclick="setSearchMode('colaborador')">Por colaborador</button>
-      <button class="mode-tab ${state.searchMode==='equipe'?'active':''}" onclick="setSearchMode('equipe')">Por equipe (supervisores)</button>
-    </div>`;
-
-  if(state.searchMode === 'equipe'){
-    const teamMatches = matchingTeams(state.teamSearch.query);
-    app().innerHTML = `
-      ${topbar(true)}
-      <div class="search-hero">
-        ${modeTabs}
-        <h2>Visão geral por equipe</h2>
-        <p>Consulte o desempenho macro de todos os vendedores de uma equipe.</p>
-        <div class="search-box">
-          <input id="teamSearchInput" type="text" placeholder="Digite o nome da equipe ou do supervisor" value="${escapeAttr(state.teamSearch.query)}" autocomplete="off">
-        </div>
-        ${state.teamSearch.query && teamMatches.length === 0 ? `<div class="empty-state">Nenhuma equipe encontrada.</div>` : ''}
-        ${teamMatches.length > 0 ? `<div class="suggestions">${teamMatches.map(m => `
-          <div class="suggestion-item" onclick="selectTeam('${escapeAttr(m.team.id)}')">
-            <span class="name">${escapeHtml(m.team.name)}</span>
-            <span class="team">${escapeHtml(m.supervisor || 'sem dados')} · ${escapeHtml(m.team.state || '—')}</span>
-          </div>`).join('')}</div>` : ''}
-        ${state.registry.teams.length === 0 ? `<div class="empty-state">Nenhuma equipe cadastrada ainda.</div>` : ''}
-      </div>
-    `;
-    const input = $('#teamSearchInput');
-    if(input){
-      input.focus();
-      input.setSelectionRange(input.value.length, input.value.length);
-      input.addEventListener('input', e => { state.teamSearch.query = e.target.value; render(); });
-    }
-    return;
-  }
-
-  const suggestions = uniqueNamesMatching(state.query);
-  app().innerHTML = `
-    ${topbar(true)}
-    <div class="search-hero">
-      ${modeTabs}
-      <h2>Pau Brasil Motos: Consulta de Metas</h2>
-      <div class="search-box">
-        <input id="searchInput" type="text" placeholder="Digite seu nome" value="${escapeAttr(state.query)}" autocomplete="off">
-      </div>
-      ${state.query && suggestions.length === 0 ? `<div class="empty-state">Nenhum colaborador encontrado com esse nome.</div>` : ''}
-      ${suggestions.length > 0 ? `<div class="suggestions">${suggestions.map(s => `
-        <div class="suggestion-item" onclick="selectPerson('${escapeAttr(s.name)}')">
-          <span class="name" style="${s.vacation?'opacity:.5;':''}">${escapeHtml(s.name)}${s.vacation ? ' <span class=\"vacation-tag\">Férias</span>' : ''}</span>
-          <span class="team">${escapeHtml(s.teamName)} · ${escapeHtml(s.state || '—')}</span>
-        </div>`).join('')}</div>` : ''}
-      ${state.index.length === 0 ? `<div class="empty-state">Nenhum dado cadastrado ainda. Peça ao administrador para importar a planilha do mês.</div>` : ''}
-    </div>
-  `;
-  const input = $('#searchInput');
-  if(input){
-    input.focus();
-    input.setSelectionRange(input.value.length, input.value.length);
-    input.addEventListener('input', e => { state.query = e.target.value; render(); });
-  }
-}
-
-function selectPerson(name){
-  const recs = recordsFor(name);
-  if(recs.length === 0) return;
-  state.selectedName = name;
-  state.selectedMonthKey = recs[0].monthKey;
-  state.view = 'profile';
-  render();
-}
-
-function goSearch(){ state.view = 'search'; state.query=''; state.teamSearch.query=''; render(); }
-
-function renderProfile(){
-  const recs = recordsFor(state.selectedName);
-  const rec = recs.find(r => r.monthKey === state.selectedMonthKey) || recs[0];
-  if(!rec){ goSearch(); return; }
-  const tmpl = TEMPLATES[rec.template];
-  const cols = flatCols(rec.template);
-
-  const groupsHtml = rec.vacation ? `
-    <div class="group">
-      <div class="group-title">Férias</div>
-      <div class="group-rows"><div class="hint" style="margin:2px 0;">Este colaborador está de férias em ${escapeHtml(rec.monthLabel)}, sem metas registradas neste mês.</div></div>
-    </div>
-  ` : tmpl.groups.map(g => {
-    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
-    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
-    const metaVal = metaColIndex >= 0 ? rec.values[metaColIndex] : undefined;
-    const realVal = realColIndex >= 0 ? rec.values[realColIndex] : undefined;
-    const statsHtml = g.cols.map(c => {
-      const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === c.key);
-      const val = rec.values[flatIndex];
-      const cls = c.percent ? statClass(g.key, c.key, val, { metaVal, realVal }) : '';
-      return `<div class="stat">
-        <div class="slabel">${escapeHtml(c.label)}</div>
-        <div class="sval ${cls}">${val === undefined || val === '' ? '—' : escapeHtml(val)}</div>
-      </div>`;
-    }).join('');
-    return `<div class="group">
-      <div class="group-title">${escapeHtml(g.label)}</div>
-      <div class="group-rows">${statsHtml}</div>
-    </div>`;
-  }).join('');
-
-  const monthTabs = recs.map(r => `
-    <button class="month-tab ${r.monthKey===rec.monthKey?'active':''}" onclick="selectMonth('${r.monthKey}')">${escapeHtml(r.monthLabel)}${r.vacation ? ' 🌴' : ''}</button>
-  `).join('');
-
-  const updated = rec.updatedAt ? new Date(rec.updatedAt).toLocaleString('pt-BR') : '—';
-
-  app().innerHTML = `
-    ${topbar(true)}
-    <button class="back-btn" onclick="goSearch()">← Voltar à pesquisa</button>
-    <div class="profile-header">
-      <p class="pname" style="${rec.vacation?'opacity:.5;':''}">${escapeHtml(rec.name)}${rec.vacation ? ' <span class="vacation-tag">Férias</span>' : ''}</p>
-      <div class="profile-meta">
-        ${stateBadge(rec.state)}
-        <span class="chip">Equipe: <b>${escapeHtml(rec.teamName)}</b></span>
-        <span class="chip">Supervisor(a): <b>${escapeHtml(rec.supervisor || '—')}</b></span>
-      </div>
-    </div>
-    <div class="month-tabs">${monthTabs}</div>
-    <div class="updated-note">Atualizado em ${updated}</div>
-    ${groupsHtml}
-  `;
-}
-
-function selectMonth(mk){ state.selectedMonthKey = mk; render(); }
-
-function selectTeam(teamId){
-  const dsEntries = teamDatasetsFor(teamId);
-  if(dsEntries.length === 0) return;
-  state.teamSearch.selectedTeamId = teamId;
-  state.teamSearch.selectedMonthKey = dsEntries[0].monthKey;
-  state.teamSearch.sortCol = null;
-  state.teamSearch.sortDir = 'desc';
-  state.view = 'teamDashboard';
-  render();
-}
-
-function selectTeamMonth(mk){ state.teamSearch.selectedMonthKey = mk; render(); }
-
-function sortTeamTable(colKey){
-  if(state.teamSearch.sortCol === colKey){
-    state.teamSearch.sortDir = state.teamSearch.sortDir === 'desc' ? 'asc' : 'desc';
-  }else{
-    state.teamSearch.sortCol = colKey;
-    state.teamSearch.sortDir = 'desc';
-  }
-  render();
-}
-
-function renderYearMonthGrid(dsEntries, selectedMonthKey){
-  const byYear = new Map();
-  dsEntries.forEach(d => {
-    const year = d.monthKey.slice(0,4);
-    const month = parseInt(d.monthKey.slice(5,7),10);
-    if(!byYear.has(year)) byYear.set(year, new Map());
-    byYear.get(year).set(month, d);
-  });
-  const years = Array.from(byYear.keys()).sort((a,b) => b.localeCompare(a));
-  return years.map(year => {
-    const monthsMap = byYear.get(year);
-    const row = (fromM, toM) => {
-      const cells = [];
-      for(let m=fromM; m<=toM; m++){
-        const d = monthsMap.get(m);
-        if(!d){ cells.push(`<div class="month-cell empty"></div>`); continue; }
-        cells.push(`<div class="month-cell"><button class="${d.monthKey===selectedMonthKey?'active':''}" onclick="selectTeamMonth('${d.monthKey}')">${escapeHtml(d.monthLabel)}</button></div>`);
-      }
-      return `<div class="month-grid">${cells.join('')}</div>`;
-    };
-    return `<div class="year-block">
-      <div class="year-label">${escapeHtml(year)}</div>
-      ${row(1,6)}
-      ${row(7,12)}
-    </div>`;
-  }).join('');
-}
-
-function backToTeamList(){ state.view='search'; state.searchMode='equipe'; render(); }
-
-function goToProfileFromTeam(name){
-  selectPerson(name);
-}
-
-function renderTeamDashboard(){
-  const teamId = state.teamSearch.selectedTeamId;
-  const team = state.registry.teams.find(t => t.id === teamId);
-  if(!team){ state.view='search'; state.searchMode='equipe'; render(); return; }
-  const dsEntries = teamDatasetsFor(teamId);
-  const monthKey = state.teamSearch.selectedMonthKey || (dsEntries[0] && dsEntries[0].monthKey);
-  const dsMeta = dsEntries.find(d => d.monthKey === monthKey) || dsEntries[0];
-  const ds = state.datasets[teamId+'::'+monthKey];
-  if(!ds || !dsMeta){
-    app().innerHTML = `${topbar(false)}<button class="back-btn" onclick="goSearch()">← Voltar</button><div class="empty-state">Sem dados importados para esta equipe ainda.</div>`;
-    return;
-  }
-  const tmpl = TEMPLATES[team.template];
-  const cols = flatCols(team.template);
-
-  // ---- Totais da equipe (linha do supervisor) ----
-  const totalsHtml = tmpl.groups.map(g => {
-    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
-    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
-    const metaVal = metaColIndex >= 0 ? ds.supervisor.values[metaColIndex] : undefined;
-    const realVal = realColIndex >= 0 ? ds.supervisor.values[realColIndex] : undefined;
-    const statsHtml = g.cols.map(c => {
-      const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === c.key);
-      const val = ds.supervisor.values[flatIndex];
-      const cls = c.percent ? statClass(g.key, c.key, val, { metaVal, realVal }) : '';
-      return `<div class="stat">
-        <div class="slabel">${escapeHtml(c.label)}</div>
-        <div class="sval ${cls}">${val === undefined || val === '' ? '—' : escapeHtml(val)}</div>
-      </div>`;
-    }).join('');
-    return `<div class="group">
-      <div class="group-title">${escapeHtml(g.label)}</div>
-      <div class="group-rows">${statsHtml}</div>
-    </div>`;
-  }).join('');
-
-  // ---- Colunas de "%" (uma por grupo) para a tabela comparativa e para os insights ----
-  const pctGroups = tmpl.groups.map(g => {
-    const pctCol = g.cols.find(c => c.percent);
-    const flatIndex = cols.findIndex(fc => fc.group === g.key && fc.key === pctCol.key);
-    const metaColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'meta');
-    const realColIndex = cols.findIndex(fc => fc.group === g.key && fc.key === 'real');
-    return { key: g.key, label: g.label, flatIndex, metaColIndex, realColIndex };
-  });
-
-  const rowsData = ds.rows.map(r => {
-    if(r.vacation){
-      return { name: r.name, vacation: true, perGroup: null };
-    }
-    const perGroup = {};
-    pctGroups.forEach(pg => {
-      const val = r.values[pg.flatIndex];
-      const metaVal = pg.metaColIndex >= 0 ? r.values[pg.metaColIndex] : undefined;
-      const realVal = pg.realColIndex >= 0 ? r.values[pg.realColIndex] : undefined;
-      perGroup[pg.key] = { val, cls: statClass(pg.key, 'pct', val, { metaVal, realVal }), n: parseNum(val) };
-    });
-    return { name: r.name, vacation: false, perGroup };
-  });
-
-  // ---- Insights rápidos (vendedores de férias não entram na contagem) ----
-  const insightsHtml = pctGroups.map(pg => {
-    const active = rowsData.filter(r => !r.vacation);
-    const good = active.filter(r => r.perGroup[pg.key].cls === 'good').length;
-    const total = active.filter(r => r.perGroup[pg.key].cls !== '').length;
-    if(total === 0) return '';
-    const cls = good === total ? 'good' : (good === 0 ? 'bad' : '');
-    return `<div class="insight-row">
-      <span class="ilabel">${escapeHtml(pg.label)}: dentro da meta</span>
-      <span class="insight-count ${cls}">${good} de ${total}</span>
-    </div>`;
-  }).join('');
-
-  // ---- Ordenação da tabela (vendedores de férias sempre por último) ----
-  let sortedRows = rowsData.slice();
-  if(state.teamSearch.sortCol){
-    const sc = state.teamSearch.sortCol;
-    sortedRows.sort((a,b) => {
-      if(a.vacation && b.vacation) return 0;
-      if(a.vacation) return 1;
-      if(b.vacation) return -1;
-      const av = sc === 'name' ? normalize(a.name) : a.perGroup[sc].n;
-      const bv = sc === 'name' ? normalize(b.name) : b.perGroup[sc].n;
-      const aBad = sc !== 'name' && isNaN(av), bBad = sc !== 'name' && isNaN(bv);
-      if(aBad && bBad) return 0;
-      if(aBad) return 1;
-      if(bBad) return -1;
-      if(av < bv) return state.teamSearch.sortDir === 'asc' ? -1 : 1;
-      if(av > bv) return state.teamSearch.sortDir === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }
-
-  const tableHeaders = `
-    <th class="${state.teamSearch.sortCol==='name'?'sorted':''}" onclick="sortTeamTable('name')">Vendedor</th>
-    ${pctGroups.map(pg => `<th class="${state.teamSearch.sortCol===pg.key?'sorted':''}" onclick="sortTeamTable('${pg.key}')">${escapeHtml(pg.label)}</th>`).join('')}
-  `;
-  const tableRows = sortedRows.map(r => {
-    if(r.vacation){
-      return `<tr>
-        <td class="name-cell" style="opacity:.5;" onclick="goToProfileFromTeam('${escapeAttr(r.name)}')">${escapeHtml(r.name)}</td>
-        <td colspan="${pctGroups.length}" style="opacity:.7;"><span class="vacation-tag">Férias</span></td>
-      </tr>`;
-    }
-    return `<tr>
-      <td class="name-cell" onclick="goToProfileFromTeam('${escapeAttr(r.name)}')">${escapeHtml(r.name)}</td>
-      ${pctGroups.map(pg => `<td class="pctcell ${r.perGroup[pg.key].cls}">${r.perGroup[pg.key].val === undefined || r.perGroup[pg.key].val === '' ? '—' : escapeHtml(r.perGroup[pg.key].val)}</td>`).join('')}
-    </tr>`;
-  }).join('');
-  const totalsRow = `
-    <tr class="totals-row">
-      <td>TOTAL (${escapeHtml(ds.supervisor.name)})</td>
-      ${pctGroups.map(pg => `<td>${ds.supervisor.values[pg.flatIndex] || '—'}</td>`).join('')}
-    </tr>`;
-
-  const monthGridHtml = renderYearMonthGrid(dsEntries, monthKey);
-
-  const updated = ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
-
-  app().innerHTML = `
-    ${topbar(true)}
-    <button class="back-btn" onclick="backToTeamList()">← Voltar às equipes</button>
-    <div class="profile-header">
-      <p class="pname">${escapeHtml(team.name)}</p>
-      <div class="profile-meta">
-        ${stateBadge(team.state)}
-        <span class="chip">Supervisor(a): <b>${escapeHtml(ds.supervisor.name)}</b></span>
-        <span class="chip">${ds.rows.length} vendedores</span>
-      </div>
-    </div>
-    ${monthGridHtml}
-    <div class="updated-note">Atualizado em ${updated}</div>
-
-    <div class="panel">
-      <h3>Totais da equipe</h3>
-      ${totalsHtml}
-    </div>
-
-    <div class="panel">
-      <h3>Panorama rápido</h3>
-      <div class="insights">${insightsHtml}</div>
-    </div>
-
-    <div class="panel">
-      <h3>Comparativo entre vendedores</h3>
-      <p class="hint" style="margin-bottom:10px;">Clique no cabeçalho de uma coluna para ordenar. Clique no nome do vendedor para abrir o perfil completo.</p>
-      <div class="team-table-wrap">
-        <table class="team-table">
-          <thead><tr>${tableHeaders}</tr></thead>
-          <tbody>${tableRows}${totalsRow}</tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-// ---------- ADMIN ----------
-
-function goAdmin(){
-  if(state.adminUnlocked){ state.view = 'admin'; }
-  else { state.view = 'adminLogin'; state.admin.loginError=''; }
-  render();
-}
-
-function renderAdminLogin(){
-  app().innerHTML = `
-    ${topbar(false)}
-    <div class="login-box">
-      <h2>Acesso restrito</h2>
-      ${state.admin.loginError ? `<div class="alert error">${escapeHtml(state.admin.loginError)}</div>` : ''}
-      <div class="field"><input id="loginEmail" type="email" placeholder="E-mail do administrador" value="${escapeAttr(state.admin.loginEmail)}"></div>
-      <div class="field"><input id="loginPassword" type="password" placeholder="Senha" value=""></div>
-      <button class="btn" style="width:100%" onclick="doLogin()">Entrar</button>
-      <p class="hint">O acesso de administrador é criado no Console do Firebase (Authentication → Users), não nesta tela.</p>
-    </div>
-  `;
-  const emailInp = $('#loginEmail');
-  const passInp = $('#loginPassword');
-  emailInp.addEventListener('input', e => state.admin.loginEmail = e.target.value);
-  passInp.addEventListener('input', e => state.admin.loginPassword = e.target.value);
-  passInp.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-}
-
-async function doLogin(){
-  try{
-    await auth.signInWithEmailAndPassword(state.admin.loginEmail, state.admin.loginPassword);
-    state.admin.loginError = '';
-    state.admin.loginPassword = '';
-    // adminUnlocked will flip via onAuthStateChanged listener
-  }catch(e){
-    state.admin.loginError = 'E-mail ou senha inválidos.';
-    render();
-  }
-}
-
-async function doLogout(){
-  await auth.signOut();
-  goSearch();
-}
-
-const MESES_ABBR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
-function monthKeyToLabel(monthKey){
-  if(!monthKey || !/^\d{4}-\d{2}$/.test(monthKey)) return '';
-  const [year, month] = monthKey.split('-');
-  const idx = parseInt(month,10) - 1;
-  if(idx < 0 || idx > 11) return '';
-  return `${MESES_ABBR[idx]}/${year}`;
-}
-
-const SHORT_TEMPLATE_LABEL = { padrao: 'Padrão', digital: 'Digital' };
-
-function renderAdmin(){
-  const teamOptions = state.registry.teams.map(t => {
-    const sup = latestSupervisorForTeam(t.id);
-    const label = sup ? `${sup} — ${t.name}` : t.name;
-    return `<option value="${t.id}" ${t.id===state.admin.teamId?'selected':''}>${escapeHtml(label)} (${SHORT_TEMPLATE_LABEL[t.template]})</option>`;
-  }).join('');
-
-  const teamFolders = state.registry.teams.map(t => {
-    const entries = state.registry.datasets
-      .filter(d => d.teamId === t.id)
-      .slice()
-      .sort((a,b)=> b.monthKey.localeCompare(a.monthKey));
-    if(entries.length === 0) return '';
-    const sup = latestSupervisorForTeam(t.id);
-    const label = sup ? `${sup} — ${t.name}` : t.name;
-    const itemsHtml = entries.map(d => {
-      const ds = state.datasets[d.teamId+'::'+d.monthKey];
-      const upd = ds && ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
-      return `<div class="dataset-item">
-        <div>
-          <div class="di-name">${escapeHtml(d.monthLabel)}</div>
-          <div class="di-meta">${ds ? ds.rows.length : 0} colaboradores · atualizado ${upd}</div>
-        </div>
-        <button class="btn small secondary" onclick="deleteDataset('${d.teamId}','${d.monthKey}')">Excluir</button>
-      </div>`;
-    }).join('');
-    return `<details class="team-folder">
-      <summary>📁 ${escapeHtml(label)} <span class="di-meta">(${entries.length} ${entries.length===1?'mês':'meses'})</span></summary>
-      <div class="team-folder-body">${itemsHtml}</div>
-    </details>`;
-  }).join('');
-
-  const orphanTeamIds = new Set(state.registry.teams.map(t=>t.id));
-  const orphanEntries = state.registry.datasets.filter(d => !orphanTeamIds.has(d.teamId));
-  const orphanFolder = orphanEntries.length === 0 ? '' : `<details class="team-folder">
-    <summary>📁 Sem equipe associada <span class="di-meta">(${orphanEntries.length})</span></summary>
-    <div class="team-folder-body">${orphanEntries.map(d => {
-      const ds = state.datasets[d.teamId+'::'+d.monthKey];
-      const upd = ds && ds.updatedAt ? new Date(ds.updatedAt).toLocaleString('pt-BR') : '—';
-      return `<div class="dataset-item">
-        <div>
-          <div class="di-name">${escapeHtml(d.monthLabel)}</div>
-          <div class="di-meta">${ds ? ds.rows.length : 0} colaboradores · atualizado ${upd}</div>
-        </div>
-        <button class="btn small secondary" onclick="deleteDataset('${d.teamId}','${d.monthKey}')">Excluir</button>
-      </div>`;
-    }).join('')}</div>
-  </details>`;
-
-  const datasetList = (teamFolders + orphanFolder) || `<div class="hint">Nenhum dado importado ainda.</div>`;
-
-  app().innerHTML = `
-    ${topbar(false)}
-    <p class="hint" style="margin-bottom:18px;">Área do administrador. Os colaboradores não têm acesso a esta tela.</p>
-
-    <div class="panel">
-      <h3>1. Equipes</h3>
-      <div class="row-gap" style="align-items:flex-end;">
-        <div class="field" style="flex:2;min-width:160px;">
-          <label>Nome da equipe</label>
-          <input id="newTeamName" type="text" placeholder="Ex: Petrolina Matriz" value="${escapeAttr(state.admin.newTeamName)}">
-        </div>
-        <div class="field" style="flex:1;min-width:140px;">
-          <label>Formato</label>
-          <select id="newTeamTemplate">
-            <option value="padrao" ${state.admin.newTeamTemplate==='padrao'?'selected':''}>Padrão (Consórcio)</option>
-            <option value="digital" ${state.admin.newTeamTemplate==='digital'?'selected':''}>Digital (Faturamento + Consórcio)</option>
-          </select>
-        </div>
-        <button class="btn" onclick="addTeam()">Adicionar</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>Equipes por estado</h3>
-      <p class="hint" style="margin-bottom:14px;">O estado é detectado automaticamente pelo nome do supervisor assim que os dados são salvos. Corrija manualmente se necessário.</p>
-      ${state.registry.teams.length === 0 ? `<div class="hint">Nenhuma equipe cadastrada ainda.</div>` : `
-        ${['Pernambuco','Bahia',null].map(st => {
-          const teamsInState = state.registry.teams.filter(t => (t.state||null) === st);
-          if(teamsInState.length === 0) return '';
-          return `<div style="margin-bottom:14px;">
-            <div style="margin-bottom:8px;">${stateBadge(st)}</div>
-            ${teamsInState.map(t => {
-              const sup = latestSupervisorForTeam(t.id);
-              const displayName = sup ? `${escapeHtml(sup)} — ${escapeHtml(t.name)}` : escapeHtml(t.name);
-              return `
-              <div class="dataset-item">
-                <div>
-                  <div class="di-name">${displayName}</div>
-                  <div class="di-meta">${SHORT_TEMPLATE_LABEL[t.template]}</div>
-                </div>
-                <div class="row-gap" style="align-items:center;">
-                  <select class="state-select" onchange="setTeamState('${t.id}', this.value)">
-                    <option value="" ${!t.state?'selected':''}>Não identificado</option>
-                    <option value="Pernambuco" ${t.state==='Pernambuco'?'selected':''}>Pernambuco</option>
-                    <option value="Bahia" ${t.state==='Bahia'?'selected':''}>Bahia</option>
-                  </select>
-                  <button class="btn small secondary" onclick="deleteTeam('${t.id}')">Excluir equipe</button>
-                </div>
-              </div>
-            `;
-            }).join('')}
-          </div>`;
-        }).join('')}
-      `}
-    </div>
-
-    <div class="panel">
-      <h3>2. Importar dados do mês</h3>
-      <div class="field">
-        <label>Equipe</label>
-        <select id="dsTeam">
-          <option value="">Selecione...</option>
-          ${teamOptions}
-        </select>
-      </div>
-      <div class="row-gap">
-        <div class="field" style="flex:1;min-width:150px;">
-          <label>Mês/Ano</label>
-          <input id="dsMonth" type="month" value="${escapeAttr(state.admin.monthKey)}">
-        </div>
-        <div class="field" style="flex:1;min-width:150px;">
-          <label>Rótulo exibido (ex: SET/2026)</label>
-          <input id="dsMonthLabel" type="text" placeholder="SET/2026" value="${escapeAttr(state.admin.monthLabel)}">
-        </div>
-      </div>
-      <div class="field">
-        <label>Colar linhas de dados do Excel (sem cabeçalho). A ÚLTIMA linha deve ser a do supervisor.</label>
-        <textarea id="pasteArea" placeholder="Cole aqui as linhas copiadas do Excel...">${escapeHtml(state.admin.pasteText)}</textarea>
-        <div class="hint">Copie no Excel apenas as linhas de vendedores + a linha final do supervisor, sem cabeçalhos. Colunas separadas por TAB.</div>
-      </div>
-      <div class="row-gap">
-        <button class="btn secondary" onclick="previewPaste()">Pré-visualizar</button>
-        <button class="btn" onclick="saveDataset()">Salvar dados</button>
-      </div>
-      ${state.admin.error ? `<div class="alert error" style="margin-top:12px;">${escapeHtml(state.admin.error)}</div>` : ''}
-      ${state.admin.ok ? `<div class="alert ok" style="margin-top:12px;">${escapeHtml(state.admin.ok)}</div>` : ''}
-      ${state.admin.diagnostic ? renderDiagnostic() : ''}
-      ${state.admin.preview ? renderPreviewTable() : ''}
-    </div>
-
-    <div class="panel">
-      <h3>3. Dados já importados</h3>
-      ${datasetList}
-    </div>
-
-    <div class="panel">
-      <h3>4. Sessão</h3>
-      <p class="hint" style="margin-bottom:10px;">Conectado como <b>${escapeHtml(auth.currentUser ? auth.currentUser.email : '—')}</b></p>
-      <button class="btn secondary" onclick="doLogout()">Sair</button>
-    </div>
-  `;
-
-  const teamSel = $('#dsTeam'); if(teamSel){ teamSel.value = state.admin.teamId; teamSel.addEventListener('change', e => state.admin.teamId = e.target.value); }
-  const monthInp = $('#dsMonth'); if(monthInp) monthInp.addEventListener('change', e => { state.admin.monthKey = e.target.value; state.admin.monthLabel = monthKeyToLabel(e.target.value); render(); });
-  const monthLabelInp = $('#dsMonthLabel'); if(monthLabelInp) monthLabelInp.addEventListener('input', e => state.admin.monthLabel = e.target.value);
-  const pasteArea = $('#pasteArea'); if(pasteArea) pasteArea.addEventListener('input', e => state.admin.pasteText = e.target.value);
-  const newTeamNameInp = $('#newTeamName'); if(newTeamNameInp) newTeamNameInp.addEventListener('input', e => state.admin.newTeamName = e.target.value);
-  const newTeamTplSel = $('#newTeamTemplate'); if(newTeamTplSel) newTeamTplSel.addEventListener('change', e => state.admin.newTeamTemplate = e.target.value);
-}
-
-function renderDiagnostic(){
-  const d = state.admin.diagnostic;
-  const rows = d.firstRowValues.map((v,i) => {
-    const expectedLabel = d.expectedLabels[i] || '(a mais — sem coluna esperada aqui)';
-    return `<tr><td>${i+1}</td><td>${escapeHtml(v===undefined||v===''?'(vazio)':v)}</td><td>${escapeHtml(expectedLabel)}</td></tr>`;
-  }).join('');
-  return `<div style="margin-top:12px;">
-    <div class="hint" style="margin-bottom:8px;">Vendedor da 1ª linha: <b>${escapeHtml(d.firstRowName)}</b> — ${d.firstRowValues.length} valores encontrados, ${d.expectedCols} esperados.</div>
-    <table class="preview"><thead><tr><th>#</th><th>Valor colado</th><th>Coluna esperada correspondente</th></tr></thead>
-    <tbody>${rows}</tbody></table>
-    <div class="hint" style="margin-top:8px;">As linhas cujo # ultrapassa o total esperado são as que sobram — geralmente colunas extras copiadas do Excel. Remova-as e cole novamente.</div>
-  </div>`;
-}
-
-function renderPreviewTable(){
-  const p = state.admin.preview;
-  const team = state.registry.teams.find(t=>t.id===state.admin.teamId);
-  const cols = flatCols(team.template);
-  const header = ['Nome', ...cols.map(c => c.group+'.'+c.key)];
-  const rows = [
-    ...p.rows.map(r => r.vacation ? [r.name, `— Férias (${cols.length} colunas) —`] : [r.name,...r.values]),
-    ['[SUPERVISOR] '+p.supervisor.name, ...p.supervisor.values]
-  ];
-  return `<table class="preview"><thead><tr>${header.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead>
-  <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${escapeHtml(c===undefined?'':c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-}
-
-async function setTeamState(teamId, value){
-  const team = state.registry.teams.find(t=>t.id===teamId);
-  if(!team) return;
-  team.state = value || null;
-  team.stateManual = true;
-  await saveRegistry();
-  buildIndex();
-  render();
-}
-
-async function deleteTeam(teamId){
-  const team = state.registry.teams.find(t=>t.id===teamId);
-  if(!team) return;
-  const relatedDatasets = state.registry.datasets.filter(d => d.teamId === teamId);
-  const warning = relatedDatasets.length > 0
-    ? `Excluir a equipe "${team.name}"? Isso também apaga os dados de ${relatedDatasets.length} mês(es) já importados para ela. Esta ação não pode ser desfeita.`
-    : `Excluir a equipe "${team.name}"? Esta ação não pode ser desfeita.`;
-  if(!confirm(warning)) return;
-
-  for(const d of relatedDatasets){
-    try{ await deleteDocData('datasets', teamId+'_'+d.monthKey); }catch(e){}
-    delete state.datasets[teamId+'::'+d.monthKey];
-  }
-  state.registry.datasets = state.registry.datasets.filter(d => d.teamId !== teamId);
-  state.registry.teams = state.registry.teams.filter(t => t.id !== teamId);
-  if(state.admin.teamId === teamId) state.admin.teamId = '';
-  await saveRegistry();
-  buildIndex();
-  state.admin.ok = `Equipe "${team.name}" excluída.`;
-  render();
-}
-
-async function addTeam(){
-  const name = (state.admin.newTeamName||'').trim();
-  if(!name) return;
-  const id = normalize(name).replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || ('team-'+Date.now());
-  if(state.registry.teams.some(t=>t.id===id)){
-    state.admin.error = 'Já existe uma equipe com esse nome.';
-    render();
-    return;
-  }
-  state.registry.teams.push({ id, name, template: state.admin.newTeamTemplate });
-  await saveRegistry();
-  state.admin.newTeamName = '';
-  state.admin.error='';
-  state.admin.ok = 'Equipe adicionada.';
-  render();
-}
-
-function isVacationRowCells(cells){
-  const valueCells = cells.slice(1).map(c => (c||'').trim()).filter(c => c !== '');
-  if(valueCells.length === 0) return false;
-  return valueCells.every(c => normalize(c) === 'ferias');
-}
-
-function parsePaste(){
-  state.admin.error = '';
-  state.admin.preview = null;
-  state.admin.diagnostic = null;
-  if(!state.admin.teamId){ state.admin.error = 'Selecione a equipe.'; return null; }
-  if(!state.admin.monthKey){ state.admin.error = 'Selecione o mês.'; return null; }
-  if(!state.admin.monthLabel.trim()){ state.admin.error = 'Informe o rótulo do mês (ex: SET/2026).'; return null; }
-  const team = state.registry.teams.find(t=>t.id===state.admin.teamId);
-  if(!team){ state.admin.error = 'Equipe inválida.'; return null; }
-  const expectedCols = flatCols(team.template).length;
-  const lines = state.admin.pasteText.split('\n').map(l=>l.replace(/\r$/,'')).filter(l=>l.trim()!=='');
-  if(lines.length < 2){ state.admin.error = 'Cole ao menos uma linha de vendedor + a linha do supervisor.'; return null; }
-
-  const rawRows = lines.map(l => l.split('\t').map(c=>c.trim()));
-  const vacationFlags = rawRows.map(r => isVacationRowCells(r));
-
-  const regularRows = rawRows.filter((r,i) => !vacationFlags[i]);
-  if(regularRows.length === 0){ state.admin.error = 'Todas as linhas coladas estão marcadas como "Férias" — não sobrou nenhuma linha com dados, nem a do supervisor.'; return null; }
-  const widths = regularRows.map(r => r.length);
-  const maxWidth = Math.max(...widths);
-  if(widths.some(w => w !== maxWidth)){
-    state.admin.error = `As linhas coladas não têm todas o mesmo número de colunas (variando entre ${Math.min(...widths)} e ${maxWidth}). Confira se copiou o intervalo completo e retangular no Excel.`;
-    return null;
-  }
-
-  const rawValWidth = maxWidth - 1;
-  const regularValuesMatrix = regularRows.map(r => r.slice(1));
-
-  function resolveKeepIndexes(){
-    if(rawValWidth === expectedCols) return [...Array(rawValWidth).keys()];
-    if(rawValWidth > expectedCols){
-      const blankCols = [];
-      for(let c=0; c<rawValWidth; c++){
-        const allBlank = regularValuesMatrix.every(row => (row[c]||'').trim() === '');
-        if(allBlank) blankCols.push(c);
-      }
-      const keep = [...Array(rawValWidth).keys()].filter(c => !blankCols.includes(c));
-      if(keep.length === expectedCols){
-        state.admin._strippedCount = blankCols.length;
-        return keep;
-      }
-    }
-    return null;
-  }
-
-  const keepIndexes = resolveKeepIndexes();
-  if(!keepIndexes){
-    state.admin.error = `A 1ª linha colada tem ${rawValWidth} valores, mas o formato "${TEMPLATES[team.template].label}" espera ${expectedCols}. Veja abaixo cada célula numerada da 1ª linha.`;
-    state.admin.diagnostic = {
-      expectedCols,
-      expectedLabels: flatCols(team.template).map(c => c.group+'.'+c.key),
-      firstRowName: regularRows[0][0],
-      firstRowValues: regularValuesMatrix[0]
-    };
-    return null;
-  }
-
-  const rows = rawRows.map((r, i) => {
-    if(vacationFlags[i]) return { name: r[0], vacation: true, values: [] };
-    const cells = r.slice(1);
-    return { name: r[0], vacation: false, values: keepIndexes.map(ci => cells[ci]) };
-  });
-  const supervisor = rows.pop();
-  if(supervisor.vacation){
-    state.admin.error = 'A última linha (supervisor) não pode estar marcada como "Férias". Verifique se colou a linha de totais corretamente.';
-    return null;
-  }
-  return { rows, supervisor };
-}
-
-function previewPaste(){
-  const result = parsePaste();
-  if(result){ state.admin.preview = result; }
-  render();
-}
-
-async function saveDataset(){
-  const result = parsePaste();
-  if(!result) { render(); return; }
-  const teamId = state.admin.teamId, monthKey = state.admin.monthKey, monthLabel = state.admin.monthLabel.trim();
-  const payload = { rows: result.rows, supervisor: result.supervisor, monthLabel, updatedAt: Date.now() };
-  await setDocData('datasets', teamId+'_'+monthKey, payload);
-
-  const exists = state.registry.datasets.some(d => d.teamId===teamId && d.monthKey===monthKey);
-  if(!exists){
-    state.registry.datasets.push({ teamId, monthKey, monthLabel });
-  }
-  const team = state.registry.teams.find(t=>t.id===teamId);
-  if(team && !team.stateManual){
-    const inferred = inferState(result.supervisor.name);
-    if(inferred) team.state = inferred;
-  }
-  await saveRegistry();
-  state.datasets[teamId+'::'+monthKey] = payload;
-  buildIndex();
-  state.admin.preview = null;
-  state.admin.pasteText = '';
-  state.admin.error = '';
-  state.admin.diagnostic = null;
-  const strippedNote = state.admin._strippedCount ? ` (${state.admin._strippedCount} colunas vazias foram ignoradas automaticamente)` : '';
-  state.admin._strippedCount = 0;
-  state.admin.ok = `Dados salvos: ${result.rows.length} colaboradores + supervisor(a) ${escapeHtml(result.supervisor.name)}${strippedNote}.`;
-  render();
-}
-
-async function deleteDataset(teamId, monthKey){
-  if(!confirm('Excluir este conjunto de dados?')) return;
-  try{ await deleteDocData('datasets', teamId+'_'+monthKey); }catch(e){}
-  state.registry.datasets = state.registry.datasets.filter(d => !(d.teamId===teamId && d.monthKey===monthKey));
-  delete state.datasets[teamId+'::'+monthKey];
-  await saveRegistry();
-  buildIndex();
-  render();
-}
-
-async function saveRegistry(){
-  await setDocData('app', 'registry', state.registry);
-}
-
-function escapeHtml(s){
-  return (s===undefined||s===null?'':s.toString()).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function escapeAttr(s){ return escapeHtml(s); }
-
-window.selectPerson = selectPerson;
-window.selectMonth = selectMonth;
-window.goSearch = goSearch;
-window.setSearchMode = setSearchMode;
-window.selectTeam = selectTeam;
-window.selectTeamMonth = selectTeamMonth;
-window.sortTeamTable = sortTeamTable;
-window.goToProfileFromTeam = goToProfileFromTeam;
-window.backToTeamList = backToTeamList;
-window.goAdmin = goAdmin;
-window.doLogin = doLogin;
-window.doLogout = doLogout;
-window.addTeam = addTeam;
-window.setTeamState = setTeamState;
-window.deleteTeam = deleteTeam;
-window.previewPaste = previewPaste;
-window.saveDataset = saveDataset;
-window.deleteDataset = deleteDataset;
-
-if(firebaseReady){
-  auth.onAuthStateChanged(user => {
-    state.adminUnlocked = !!user;
-    if(user && (state.view === 'adminLogin')){ state.view = 'admin'; }
-    if(!user && state.view === 'admin'){ state.view = 'search'; }
-    if(state.view !== 'loading') render();
-  });
-  loadAll();
-} else {
-  render();
-}
+(async()=>{const c=mem.get("pm_codigo"); if(c){try{await entrar(c)}catch(e){mem.del("pm_codigo")}} render()})();
 </script>
 </body>
 </html>
