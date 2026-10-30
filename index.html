@@ -69,6 +69,21 @@ h1{font-family:Anton;font-size:32px;line-height:1;margin-top:4px;text-transform:
 .pontos{display:flex;align-items:center;gap:14px}.anel{width:86px;height:86px;flex:none}
 .nota{font-size:12px;color:var(--mut);margin-top:10px;line-height:1.4}
 .carregando{color:var(--mut);text-align:center;margin-top:60px}
+.tabs.t4 button{font-size:17px}
+.aviso{background:#2a2206;border:1px solid var(--am);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.4;margin-bottom:12px;cursor:pointer}
+.aviso b{color:var(--am)}
+.cods .campo{font-size:20px;margin-top:8px}
+.cods .btn{font-size:16px;padding:10px}
+.cods .lnk{background:none;border:0;color:var(--am);font-size:13px;cursor:pointer;padding:6px 0;text-decoration:underline}
+.gl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.gl:last-child{border-bottom:0}
+.gl .gn{font-family:'Bebas Neue';font-size:20px;line-height:1.05}
+.gl .gs{font-size:12px;color:var(--mut);margin-top:2px}
+.gl .gb{background:none;border:1px solid var(--am);color:var(--am);border-radius:9px;padding:7px 10px;font-size:13px;cursor:pointer;white-space:nowrap}
+.gform{padding:0 0 12px;border-bottom:1px solid var(--line)}
+.okmsg{color:var(--ok);font-size:14px;margin-top:10px;line-height:1.4}
+.okmsg b{font-family:'Bebas Neue';font-size:24px;letter-spacing:3px;color:var(--txt)}
+.tipo{display:inline-block;font-family:'Bebas Neue';font-size:12px;background:#262626;color:var(--mut);border-radius:5px;padding:1px 6px 0;margin-left:6px;vertical-align:2px}
 </style>
 </head>
 <body>
@@ -81,7 +96,7 @@ const BASE=`https://firestore.googleapis.com/v1/projects/${PROJETO}/databases/(d
 const MESES=["JAN","FEV","MAR","ABR","MAI","JUN","JUL","AGO","SET","OUT","NOV","DEZ"];
 
 function dec(v){ if(!v) return null; const k=Object.keys(v)[0], x=v[k];
-  switch(k){case"stringValue":case"booleanValue":return x;case"integerValue":return Number(x);case"doubleValue":return x;case"nullValue":return null;
+  switch(k){case"stringValue":case"booleanValue":case"timestampValue":return x;case"integerValue":return Number(x);case"doubleValue":return x;case"nullValue":return null;
   case"arrayValue":return (x.values||[]).map(dec);case"mapValue":{const o={};for(const [a,b] of Object.entries(x.fields||{}))o[a]=dec(b);return o}}return null}
 async function ler(col,id){const r=await fetch(BASE+col+"/"+encodeURIComponent(id)+"?key="+CHAVE_API); if(r.status===404||r.status===403) return null; if(!r.ok) throw new Error("Falha ao ler ("+r.status+")"); const j=await r.json(); const o={}; for(const [a,b] of Object.entries(j.fields||{})) o[a]=dec(b); return o}
 async function sha256(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
@@ -90,25 +105,99 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const curto=n=>{n=String(n||"");const p=n.split(/\s+/).filter(w=>!["DA","DE","DO","DOS","DAS","E"].includes(w));return n.length<=22||p.length<2?n:p[0]+" "+p[p.length-1]};
 const classe=s=>s===1?"ok":s===-1?"ruim":"";
 
-const E={acesso:null, dados:{}, tela:"equipe", equipe:null, mes:null, vend:null, farol:null};
+const E={acesso:null, dados:{}, tela:"equipe", equipe:null, mes:null, vend:null, farois:{}, farolSel:null, cod:{}};
 
+const amplo=()=>E.acesso&&E.acesso.tipo!=="equipe";   // líder, gerente e admin veem o detalhe
 async function entrar(codigo){
-  const h=await sha256(codigo.trim().toUpperCase());
+  const c=codigo.trim().toUpperCase(), h=await sha256(c);
   const a=await ler("acesso",h);
   if(!a) throw new Error("Código não encontrado. Confira com seu líder.");
-  E.acesso=a; mem.set("pm_codigo",codigo.trim().toUpperCase());
-  E.equipe=a.equipes&&a.equipes.length?a.equipes[0].id:null;
-  if(a.tipo==="lider"&&a.farol){ E.tela="lider"; ler("farol",a.farol).then(f=>{E.farol=f;if(E.tela==="lider")render()}).catch(()=>{}) }
+  let perfil;
+  if(a.p){ perfil=await ler("perfil",a.p);
+    if(!perfil||perfil.cod!==h) throw new Error("Este código não vale mais. Peça o código atual ao seu líder.");
+    perfil.p=a.p; perfil.h=h }
+  else perfil=a;  // formato antigo
+  E.acesso=perfil; mem.set("pm_codigo",c);
+  const eqs=perfil.equipes||[]; E.equipe=eqs.length?eqs[0].id:null;
+  if(perfil.tipo==="lider"&&perfil.farol){ E.tela="lider"; abrirFarol(perfil.farol) }
+  else if((perfil.farois||[]).length){ E.farolSel=perfil.farois[0].k }
+  if(amplo()&&perfil.p&&!perfil.em) E.tela="codigos";
   await carregarEquipe(E.equipe);
 }
+function abrirFarol(k){E.farolSel=k; if(E.farois[k]) return; E.farois[k]=null;
+  ler("farol",k).then(f=>{E.farois[k]=f||{erro:1};if(E.tela==="lider")render()}).catch(()=>{E.farois[k]={erro:1};if(E.tela==="lider")render()})}
 function eqInfo(id){return (E.acesso.equipes||[]).find(e=>e.id===id)}
 async function carregarEquipe(id){
   if(!id||E.dados[id]) return;
-  const e=eqInfo(id), lider=E.acesso.tipo==="lider";
-  const d=await ler(lider?"detalhe":"resumo", lider?e.d:e.r);
+  const e=eqInfo(id), det=amplo()&&e.d;
+  const d=await ler(det?"detalhe":"resumo", det?e.d:e.r);
   E.dados[id]=d||{meses:{}};
 }
 function mesesDe(id){const d=E.dados[id];return d?Object.keys(d.meses||{}).sort():[]}
+
+/* ---------- troca de códigos ---------- */
+const DOC=(c,id)=>`projects/${PROJETO}/databases/(default)/documents/${c}/${id}`;
+async function commit(writes){
+  const r=await fetch(BASE.replace(/\/documents\/$/,"/documents:commit")+"?key="+CHAVE_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({writes})});
+  if(r.ok) return; const j=await r.json().catch(()=>({})), st=(j.error&&j.error.status)||"";
+  if(st==="ALREADY_EXISTS"||st==="FAILED_PRECONDITION"||r.status===409) throw new Error("Esse código não está disponível. Escolha outro.");
+  if(st==="PERMISSION_DENIED"||r.status===403) throw new Error("Não foi possível trocar: seu acesso pode ter mudado. Saia e entre de novo.");
+  throw new Error("Falha ao salvar ("+r.status+"). Tente de novo.");
+}
+function validarCodigo(c){c=c.trim().toUpperCase();
+  if(!/^[A-Z0-9]{6,12}$/.test(c)) return "Use de 6 a 12 letras e números, sem espaços ou acentos.";
+  if(!/[A-Z]/.test(c)||!/[0-9]/.test(c)) return "Misture letras e números (ex.: AGUIAS26).";
+  return "";}
+function sugerir(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c="";const r=crypto.getRandomValues(new Uint32Array(8));for(const x of r)c+=A[x%A.length];return /[0-9]/.test(c)&&/[A-Z]/.test(c)?c:sugerir()}
+// troca o código do perfil p; "por" = hash do código de quem está trocando
+async function trocarCodigo(p,codigo){
+  const c=codigo.trim().toUpperCase(), novo=await sha256(c), alvo=await ler("perfil",p);
+  if(!alvo||!alvo.cod) throw new Error("Perfil não encontrado.");
+  if(alvo.cod===novo) throw new Error("Esse já é o código atual.");
+  const rt=[{fieldPath:"em",setToServerValue:"REQUEST_TIME"}];
+  await commit([
+    {update:{name:DOC("troca",novo),fields:{p:{stringValue:p},por:{stringValue:E.acesso.h}}},updateTransforms:rt,currentDocument:{exists:false}},
+    {update:{name:DOC("acesso",novo),fields:{p:{stringValue:p}}},currentDocument:{exists:false}},
+    {update:{name:DOC("perfil",p),fields:{cod:{stringValue:novo}}},updateMask:{fieldPaths:["cod"]},updateTransforms:rt,currentDocument:{exists:true}},
+    {delete:DOC("acesso",alvo.cod)}]);
+  return {c,novo};
+}
+const dataBR=t=>t?new Date(t).toLocaleDateString("pt-BR")+" às "+new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):"";
+const ROT={equipe:"equipe",lider:"líder",gerente:"gerente",admin:"admin"};
+function telaCodigos(){
+  const a=E.acesso, g=a.gereInfo||[], C=E.cod;
+  if(!C.carregado){C.carregado=true;C.st={};
+    Promise.all(g.map(x=>ler("perfil",x.p).then(d=>{C.st[x.p]=d?(d.em?"Código criado em "+dataBR(d.em):"Código de 1º acesso ainda ativo"):"Ainda não publicado"}).catch(()=>{}))).then(()=>{if(E.tela==="codigos")render()})}
+  const form=(id,rotulo,sug)=>`<div class="gform"><input class="campo" id="n_${id}" maxlength="12" autocomplete="off" autocapitalize="characters" placeholder="NOVO CÓDIGO" value="${esc(C["v_"+id]||"")}">
+    ${sug?`<button class="lnk" data-sug="${id}">gerar um código aleatório</button>`:""}<button class="btn" data-salvar="${id}">${rotulo}</button>
+    <div class="erro" id="e_${id}">${esc(C["e_"+id]||"")}</div>${C["ok_"+id]?`<div class="okmsg">${C["ok_"+id]}</div>`:""}</div>`;
+  const ests=[...new Set(g.map(x=>x.estado||""))].sort();
+  const grupo=st=>g.filter(x=>(x.estado||"")===st).sort((x,y)=>(x.t===y.t?0:x.t==="equipe"?-1:1)||x.n.localeCompare(y.n)).map(x=>`<div class="gl"><div><div class="gn">${esc(x.n)}<span class="tipo">${ROT[x.t]||""}</span></div><div class="gs">${esc(C.st&&C.st[x.p]||"…")}</div></div>
+      <button class="gb" data-abrir="${x.p}">${C.aberto===x.p?"fechar":"novo código"}</button></div>${C.aberto===x.p?form(x.p,"Salvar código de "+esc(x.n),true):""}`).join("");
+  return `<div class="perfil cods"><div class="nome">Seu código</div>
+    <div class="sub">${a.em?"Criado por você em "+dataBR(a.em)+".":"Você está usando o código de primeiro acesso. Crie um código só seu — o de primeiro acesso deixa de funcionar."}</div>
+    ${form("eu","Salvar meu código",false)}<p class="nota">6 a 12 letras e números, misturados. Não use datas, telefone ou o nome da equipe sozinho.</p></div>
+    ${g.length?`<div class="sec">Códigos que você gerencia</div><div class="perfil cods">${ests.map(st=>(ests.length>1?`<div class="sec" style="margin:6px 0 0">${esc(st||"Sem estado")}</div>`:"")+grupo(st)).join("")}
+    <p class="nota">Ao criar um código novo, o anterior para de funcionar na hora. Repasse o novo para a equipe ou o líder.</p></div>`:""}`;
+}
+function ligarCodigos(app){
+  const C=E.cod;
+  app.querySelectorAll("[data-abrir]").forEach(b=>b.onclick=()=>{C.aberto=C.aberto===b.dataset.abrir?null:b.dataset.abrir;render()});
+  app.querySelectorAll("[data-sug]").forEach(b=>b.onclick=()=>{const id=b.dataset.sug;C["v_"+id]=sugerir();C["e_"+id]="";render()});
+  app.querySelectorAll("input[id^=n_]").forEach(i=>i.oninput=()=>{C["v_"+i.id.slice(2)]=i.value});
+  app.querySelectorAll("[data-salvar]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.salvar, eu=id==="eu", v=(document.getElementById("n_"+id).value||"").trim().toUpperCase(), er=document.getElementById("e_"+id);
+    const msg=validarCodigo(v); if(msg){er.textContent=msg;return}
+    if(eu&&!confirm("Seu novo código será "+v+". Guarde-o: o código atual vai parar de funcionar. Confirmar?")) return;
+    b.disabled=true; er.textContent="Salvando…";
+    try{ const r=await trocarCodigo(eu?E.acesso.p:id,v); C["v_"+id]=""; C["e_"+id]="";
+      if(eu){E.acesso.h=r.novo;E.acesso.cod=r.novo;E.acesso.em=new Date().toISOString();mem.set("pm_codigo",r.c);C["ok_eu"]="Pronto! Seu novo código é <b>"+esc(r.c)+"</b>"}
+      else{const x=(E.acesso.gereInfo||[]).find(y=>y.p===id);C.st[id]="Código criado em "+dataBR(new Date());
+        C["ok_"+id]="Pronto! Novo código "+(x&&x.t==="equipe"?"da equipe":"de "+esc(x?x.n:""))+": <b>"+esc(r.c)+"</b><br>O código anterior já não funciona."}
+      render();
+    }catch(e){C["e_"+id]=e.message;b.disabled=false;er.textContent=e.message}
+  });
+}
 
 /* ---------- telas ---------- */
 function telaLogin(msg){
@@ -123,12 +212,14 @@ function telaLogin(msg){
 function cabecalho(){
   const d=E.dados[E.equipe]; const at=d&&d.atualizado?new Date(d.atualizado):null;
   const quando=at?at.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+at.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}):"—";
-  const lider=E.acesso.tipo==="lider";
+  const a=E.acesso, rot={lider:"Líder: ",gerente:"",admin:""}[a.tipo];
+  const temFarol=a.farol||(a.farois||[]).length, temCod=amplo()&&a.p;
+  const tab=(t,n)=>`<button data-t="${t}" class="${E.tela===t?"on":""}">${n}</button>`;
+  const n=1+2+(temFarol?1:0)+(temCod?1:0);
   return `<header><div><div class="marca">PAU BRASIL MOTOS</div><h1>Portal de Metas</h1></div>
-  <div class="upd">ATUALIZADO EM<b>${quando}</b><button class="sair" id="sair">${lider?"Líder: "+esc(E.acesso.nome)+" · sair":"Sair"}</button></div></header>
-  <div class="tabs">${lider?`<button data-t="lider" class="${E.tela==="lider"?"on":""}">Meu farol</button>`:""}
-  <button data-t="equipe" class="${E.tela==="equipe"?"on":""}">Equipe</button>
-  <button data-t="vend" class="${E.tela==="vend"?"on":""}">Vendedor</button></div>`;
+  <div class="upd">ATUALIZADO EM<b>${quando}</b><button class="sair" id="sair">${rot!=null?esc(rot+a.nome)+" · sair":"Sair"}</button></div></header>
+  <div class="tabs ${n>3?"t4":""}">${temFarol?tab("lider",a.farol?"Meu farol":"Faróis"):""}${tab("equipe","Equipe")}${tab("vend","Vendedor")}${temCod?tab("codigos","Códigos"):""}</div>
+  ${temCod&&!a.em&&E.tela!=="codigos"?`<div class="aviso" data-t="codigos">Você entrou com um <b>código de primeiro acesso</b>. Toque aqui para criar o seu código pessoal.</div>`:""}`;
 }
 function kpis(m,linha){
   if(!linha||!linha.i) return "";
@@ -155,7 +246,9 @@ function serie(id,nome,total){
 function seletores(){
   const eqs=E.acesso.equipes||[], ms=mesesDe(E.equipe);
   let h="";
-  if(eqs.length>1) h+=`<select class="sel" id="selEq">${eqs.map(e=>`<option value="${esc(e.id)}" ${e.id===E.equipe?"selected":""}>${esc(e.nome)} — ${esc(e.sup)}</option>`).join("")}</select>`;
+  const op=e=>`<option value="${esc(e.id)}" ${e.id===E.equipe?"selected":""}>${esc(e.nome)} — ${esc(e.sup)}</option>`;
+  const ests=[...new Set(eqs.map(e=>e.estado||"Outras"))];
+  if(eqs.length>1) h+=`<select class="sel" id="selEq">${ests.length>1?ests.map(st=>`<optgroup label="${esc(st)}">${eqs.filter(e=>(e.estado||"Outras")===st).map(op).join("")}</optgroup>`).join(""):eqs.map(op).join("")}</select>`;
   if(ms.length) h+=`<div class="chips">${ms.slice().reverse().map(k=>`<span class="chip ${k===E.mes?"on":""}" data-mes="${k}">${MESES[+k.slice(5)-1]}/${k.slice(2,4)}</span>`).join("")}</div>`;
   return h;
 }
@@ -187,7 +280,15 @@ function telaVend(){
   ${kpis(m,v)}${grafico(serie(E.equipe,v.n,false),(m.s||"")+" mês a mês")}`:`<p class="nota">Nenhum vendedor ativo neste mês.</p>`}`;
 }
 function telaLider(){
-  const f=E.farol; if(!f) return `<p class="nota">Carregando seu farol…</p>`;
+  const lst=E.acesso.farois||[]; let topo="";
+  if(!E.acesso.farol&&lst.length){ if(!E.farolSel) E.farolSel=lst[0].k; abrirFarol(E.farolSel);
+    topo=`<div class="chips">${lst.map(x=>`<span class="chip ${x.k===E.farolSel?"on":""}" data-f="${esc(x.k)}">${esc(x.n)}</span>`).join("")}</div>` }
+  const f=E.farois[E.farolSel];
+  if(!f) return topo+`<p class="nota">Carregando o farol…</p>`;
+  if(f.erro||!f.itens) return topo+`<p class="nota">Farol ainda não publicado.</p>`;
+  return topo+telaFarol(f);
+}
+function telaFarol(f){
   const a=f.max?f.pontos/f.max:0, R=36, C=2*Math.PI*R;
   const it=(f.itens||[]).map(i=>{let v;
     if(i.pend) v=`<span class="pend">PENDENTE</span><small>sem dado no painel</small>`;
@@ -195,21 +296,23 @@ function telaLider(){
     return `<div class="linha"><div><div class="grp">${esc(i.g)}</div><div class="ind">${esc(i.n)}</div><div class="grp">pontos ${String(i.pts).replace(".",",")} de ${String(i.peso).replace(".",",")}</div></div><div class="val">${v}</div></div>`}).join("");
   return `<div class="perfil"><div class="pontos"><svg class="anel" viewBox="0 0 90 90"><circle cx="45" cy="45" r="${R}" fill="none" stroke="#2b2a25" stroke-width="9"/><circle cx="45" cy="45" r="${R}" fill="none" stroke="#f8bd03" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C*Math.min(a,1)} ${C}" transform="rotate(-90 45 45)"/><text x="45" y="51" text-anchor="middle" font-family="Anton" font-size="19" fill="#f4f1ea">${String(Math.round(f.pontos*100)/100).replace(".",",")}</text></svg>
   <div><div class="nome">Farol — ${esc(f.nome)}</div><div class="sub">Pontos no mês (de ${f.max}) · acumulado no ano: ${String(Math.round((f.pontosAc||0)*100)/100).replace(".",",")}</div><span class="mes">${esc(f.mes)}</span></div></div></div>
-  <div class="perfil farol">${it}</div><p class="nota">Último mês fechado, lido do seu painel. “Pendente” = indicador sem dado preenchido.</p>`;
+  <div class="perfil farol">${it}</div><p class="nota">Último mês fechado, lido do painel do líder. “Pendente” = indicador sem dado preenchido.</p>`;
 }
 function render(){
   const app=document.getElementById("app");
   if(!E.acesso){telaLogin();return}
   const ms=mesesDe(E.equipe); if(!E.mes||!ms.includes(E.mes)) E.mes=ms[ms.length-1]||null;
-  const corpo=E.tela==="lider"?telaLider():E.tela==="vend"?telaVend():telaEquipe();
+  const corpo=E.tela==="lider"?telaLider():E.tela==="vend"?telaVend():E.tela==="codigos"?telaCodigos():telaEquipe();
   app.innerHTML=cabecalho()+corpo;
-  app.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{E.tela=b.dataset.t;render();scrollTo(0,0)});
-  const s=document.getElementById("sair"); if(s) s.onclick=()=>{mem.del("pm_codigo");Object.assign(E,{acesso:null,dados:{},farol:null,vend:null});telaLogin()};
+  app.querySelectorAll(".tabs button,.aviso[data-t]").forEach(b=>b.onclick=()=>{E.tela=b.dataset.t;render();scrollTo(0,0)});
+  app.querySelectorAll("[data-f]").forEach(c=>c.onclick=()=>{abrirFarol(c.dataset.f);render()});
+  if(E.tela==="codigos") ligarCodigos(app);
+  const s=document.getElementById("sair"); if(s) s.onclick=()=>{mem.del("pm_codigo");Object.assign(E,{acesso:null,dados:{},farois:{},farolSel:null,vend:null,cod:{},tela:"equipe"});telaLogin()};
   const se=document.getElementById("selEq"); if(se) se.onchange=async()=>{E.equipe=se.value;E.mes=null;E.vend=null;app.querySelector(".perfil")&&(app.querySelector(".perfil").style.opacity=.5);await carregarEquipe(E.equipe);render()};
   app.querySelectorAll("[data-mes]").forEach(c=>c.onclick=()=>{E.mes=c.dataset.mes;render()});
   app.querySelectorAll("[data-v]").forEach(c=>c.onclick=()=>{E.vend=c.dataset.v;E.tela="vend";render();scrollTo(0,0)});
 }
-(async()=>{const c=mem.get("pm_codigo"); if(c){try{await entrar(c)}catch(e){mem.del("pm_codigo")}} render()})();
+(async()=>{const c=mem.get("pm_codigo"); if(c){try{await entrar(c)}catch(e){mem.del("pm_codigo");telaLogin(e.message.startsWith("Falha")?"":"Seu código salvo não vale mais (pode ter sido trocado). Digite o código atual.");return}} render()})();
 </script>
 </body>
 </html>
