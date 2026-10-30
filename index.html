@@ -156,7 +156,7 @@ async function trocarCodigo(p,codigo){
   if(alvo.cod===novo) throw new Error("Esse já é o código atual.");
   const rt=[{fieldPath:"em",setToServerValue:"REQUEST_TIME"}];
   await commit([
-    {update:{name:DOC("troca",novo),fields:{p:{stringValue:p},por:{stringValue:E.acesso.h}}},updateTransforms:rt,currentDocument:{exists:false}},
+    {update:{name:DOC("troca",novo),fields:{p:{stringValue:p},por:{stringValue:E.acesso.h},c:{stringValue:c}}},updateTransforms:rt,currentDocument:{exists:false}},
     {update:{name:DOC("acesso",novo),fields:{p:{stringValue:p}}},currentDocument:{exists:false}},
     {update:{name:DOC("perfil",p),fields:{cod:{stringValue:novo}}},updateMask:{fieldPaths:["cod"]},updateTransforms:rt,currentDocument:{exists:true}},
     {delete:DOC("acesso",alvo.cod)}]);
@@ -176,7 +176,7 @@ function telaCodigos(){
       <button class="gb" data-abrir="${x.p}">${C.aberto===x.p?"fechar":"novo código"}</button></div>${C.aberto===x.p?form(x.p,"Salvar código de "+esc(x.n),true):""}`).join("");
   return `<div class="perfil cods"><div class="nome">Seu código</div>
     <div class="sub">${a.em?"Criado por você em "+dataBR(a.em)+".":"Você está usando o código de primeiro acesso. Crie um código só seu — o de primeiro acesso deixa de funcionar."}</div>
-    ${form("eu","Salvar meu código",false)}<p class="nota">6 a 12 letras e números, misturados. Não use datas, telefone ou o nome da equipe sozinho.</p></div>
+    ${form("eu","Salvar meu código",false)}<p class="nota">6 a 12 letras e números, misturados. Não use datas, telefone ou o nome da equipe sozinho. O administrador guarda uma cópia dos códigos para o caso de esquecimento.</p></div>
     ${g.length?`<div class="sec">Códigos que você gerencia</div><div class="perfil cods">${ests.map(st=>(ests.length>1?`<div class="sec" style="margin:6px 0 0">${esc(st||"Sem estado")}</div>`:"")+grupo(st)).join("")}
     <p class="nota">Ao criar um código novo, o anterior para de funcionar na hora. Repasse o novo para a equipe ou o líder.</p></div>`:""}`;
 }
